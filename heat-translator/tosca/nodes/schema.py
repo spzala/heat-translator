@@ -5,7 +5,7 @@ schema_file = os.path.dirname(os.path.abspath(__file__)) + os.sep + "nodetypesch
 schema = Loader(schema_file).load()
 
 class Schema(object):
-    
+    '''Node type schema'''
     TYPES = (
         INTEGER,
         STRING, NUMBER, BOOLEAN,
@@ -21,7 +21,6 @@ class Schema(object):
     ) = (
         'type', 'description', 'default', 'constraints'
     )
-                    
     def __init__(self, nodetype): 
         self.nodetype = nodetype
         self.nodes = self._set_nodes()
@@ -46,9 +45,7 @@ class Schema(object):
     
     ''' get schemata for a given node type'''
     def get_schemata(self):
-        ntype = self.nodetype
-        ntype = ntype.replace(".", "_")
-        return self._get_section(ntype)
+        return self._get_section(self.nodetype)
     
     ''' get schema for a given property'''
     def get_schema(self, property_name):
@@ -61,23 +58,25 @@ class Schema(object):
         return schema
     
     def get_type(self, property_name):
-        return self.get_schema(property_name)['type']
+        return self.get_schema(property_name)[self.TYPE]
     
     def get_constraints(self, property_name):
         s = self.get_schema(property_name)
-        if 'constraints' in s:
-            s['constraints']
+        if self.CONSTRAINTS in s:
+            return s[self.CONSTRAINTS]
     
     def get_description(self, property_name):
-        return self.get_schema(property_name)['description']   
+        return self.get_schema(property_name)[self.DESCRIPTION]   
     
     def get_greater_or_equal(self, property_name):
+        #TODO
         pass
     
     def get_equal(self, property_name):
+        #TODO
         pass
                 
-    ''' list all the required properties for a given nodetype '''
+    ''' list all the requirement for a given node type '''
     def required(self):
         required = []
         schemata = self.get_schemata()

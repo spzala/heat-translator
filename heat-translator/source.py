@@ -1,6 +1,9 @@
 from yaml_loader import Loader
 
 class Source(object):
+    ''' 
+    Load the source data.
+    '''
     def __init__(self, path):
         self.profile = Loader(path).load()
             

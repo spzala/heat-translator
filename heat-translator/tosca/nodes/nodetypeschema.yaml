@@ -1,4 +1,4 @@
-tosca_nodes_Compute:
+tosca.nodes.Compute:
   num_cpus:
     required: no
     type: integer

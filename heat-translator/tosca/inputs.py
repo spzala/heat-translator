@@ -1,5 +1,5 @@
-from tosca.nodetemplates.schema import Schema
-from tosca.nodetemplates.constraints import Constraint
+from tosca.nodes.constraints import Constraint
+from tosca.nodes.schema import Schema
 
 class InputParameters(object):
     def __init__(self, inputs):
@@ -19,7 +19,6 @@ class InputParameters(object):
         return self.inputs[key]
 
 class Input(object):
-                    
     def __init__(self, name, schema):
         self.name = name
         self.schema = schema
@@ -30,27 +29,31 @@ class Input(object):
     def get_description(self):
         if self.has_default():
             return self.schema['description']
-        return ''
     
     def get_default(self):
         if self.has_default():
             return self.schema['default']
-        return ''
     
     def get_constraints(self):
-        return self.schema['constraints']
+        if self.has_constraints():
+            return self.schema['constraints']
     
     def has_default(self):
-        '''Return whether the parameter has a default value.'''
+        '''Return whether the input has a default value.'''
         return Schema.DEFAULT in self.schema
 
     def has_description(self):
-        '''Return whether the parameter has a default value.'''
+        '''Return whether the parameter has description.'''
         return Schema.DESCRIPTION in self.schema
+    
+    def has_constraints(self):
+        '''Return whether a given input has constraints'''
+        return Schema.CONSTRAINTS in self.schema
         
     def validate(self):
         self.validate_type(self.get_type())
-        self.validate_constraints(self.get_constraints())
+        if self.has_constraints():
+            self.validate_constraints(self.get_constraints())
         
     def validate_type(self, input_type):
         if input_type not in Schema.TYPES:
@@ -61,6 +64,7 @@ class Input(object):
             for key in constraint.keys():
                 if key not in Constraint.CONSTRAINTS:
                     raise ValueError('Invalid constraint %s' % constraint)
-                if isinstance(key, dict): #and is_required to have a min or max or in certain range or equal to something etc.
+                if isinstance(key, dict):
+                    #TODO
                     pass
     

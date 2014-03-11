@@ -1,6 +1,24 @@
-from tosca.nodetemplates.schema import Schema
-from tosca.nodetemplates.constraints import Constraint
+from constraints import Constraint
+from schema import Schema
 
+class Properties(object):
+    ''' Node type properties '''
+    def __init__(self, properties):
+        self.properties = properties
+
+    def __contains__(self, key):
+        return key in self.properties
+
+    def __iter__(self):
+        return iter(self.properties)
+
+    def __len__(self):
+        return len(self.properties)
+
+    def __getitem__(self, key):
+        '''Get a property value.'''
+        return self.properties[key]
+    
 class Property(object):
     def __init__(self, name, nodetype, value):
         self.name = name
@@ -31,5 +49,3 @@ class Property(object):
         if constraints:
             for constraint in constraints:
                 Constraint(self.name, self.value, constraint).validate()
-        pass
-    

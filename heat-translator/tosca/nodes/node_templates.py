@@ -1,7 +1,7 @@
 from tosca.tosca_profile import Tosca
 
 class NodeTemplates(object):
-    
+    ''' Node templates in a Tosca profile.'''
     def __init__(self, nodetemplates):
         self.nodetemplates = nodetemplates
     

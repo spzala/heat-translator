@@ -4,7 +4,7 @@ SECTIONS = (VERSION, DESCRIPTION, INPUTS,
             'node_templates', 'outputs')
 
 class Tosca(object):
-    
+    '''Read a Tosca profile'''
     def __init__(self, sourcedata):
         self.sourcedata = sourcedata
 

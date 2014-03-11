@@ -1,7 +1,8 @@
 from tosca.inputs import Input
-from tosca.nodetemplates.node_template import NodeTemplate
+from tosca.nodes.node_template import NodeTemplate
 
 class ToscaValidator():
+    ''' Validates inputs and node templates.'''
     def __init__(self, Tosca):
         self.inputs = Tosca.get_inputs()
         self.nodetemplates = Tosca.get_nodetemplates()

@@ -1,23 +1,21 @@
 import numbers    
 
+CONSTRAINTS = (EQUAL, GREATER_THAN,
+                GREATER_OR_EQUAL, LESS_THAN, LESS_OR_EQUAL, IN_RANGE, VALID_VALUES,
+                LENGTH, MIN_LENGHT, MAX_LENGTH, PATTERN) = \
+                ('equal', 'greater_than', 'greater_or_equal',
+                'less_than', 'less_or_equal', 'in_range', 'valid_values', 'length', 'min_length',
+                'max_length', 'pattern')
+                
 class Constraint(object): 
-    
-    CONSTRAINTS = (EQUAL, GREATER_THAN,
-                   GREATER_OR_EQUAL, LESS_THAN, LESS_OR_EQUAL, IN_RANGE, VALID_VALUES,
-                   LENGTH, MIN_LENGHT, MAX_LENGTH, PATTERN) = \
-                   ('equal', 'greater_than', 'greater_or_equal',
-                     'less_than', 'less_or_equal', 'in_range', 'valid_values', 'length', 'min_length',
-                     'max_length', 'pattern')
-                    
     def __init__(self, propertyname, value, constraint): 
         self.propertyname = propertyname
         self.value = value
         self.constraint = constraint #dictionary e.g. valid_values: [ 1, 2, 4, 8 ] or greater_or_equal: 1
     
     def validate(self):
-        # for key in self.constraint.iterkeys():
         for key, value in self.constraint.iteritems():
-            if key == "greater_or_equal":
+            if key == GREATER_OR_EQUAL:
                 self.validate_greater_than(value)
         
     def validate_equal(self):
@@ -57,8 +55,6 @@ class Constraint(object):
     @staticmethod
     def validate_integer(value):
         if not isinstance(value, (int, long)):
-            import pdb 
-            pdb.set_trace()
             raise TypeError('value is not an integer for %s' %value)
         return Constraint.validate_number(value)
     
