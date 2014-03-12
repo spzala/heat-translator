@@ -29,7 +29,6 @@ class TOSCATranslator(object):
         self.tosca = tosca
  
     def translate(self):
-        heat_tpl = {}
         self._translate_inputs()
         self._translate_node_templates()
         self._translate_outputs()
