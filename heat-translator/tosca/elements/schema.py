@@ -1,8 +1,8 @@
-from yaml_loader import Loader
+from yaml_parser import Parser
 import os
 
-schema_file = os.path.dirname(os.path.abspath(__file__)) + os.sep + "nodetypeschema.yaml"
-schema = Loader(schema_file).load()
+schema_file = os.path.dirname(os.path.abspath(__file__)) + os.sep + 'defs' + os.sep + 'nodetypeschema.yaml'
+schema = Parser(schema_file).load()
 
 class Schema(object):
     '''Node type schema'''
@@ -58,7 +58,9 @@ class Schema(object):
         return schema
     
     def get_type(self, property_name):
-        return self.get_schema(property_name)[self.TYPE]
+        pass
+        #TODO
+        #return self.get_schema(property_name)['type']
     
     def get_constraints(self, property_name):
         s = self.get_schema(property_name)

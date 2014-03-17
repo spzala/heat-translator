@@ -11,7 +11,7 @@ class Constraint(object):
     def __init__(self, propertyname, value, constraint): 
         self.propertyname = propertyname
         self.value = value
-        self.constraint = constraint #dictionary e.g. valid_values: [ 1, 2, 4, 8 ] or greater_or_equal: 1
+        self.constraint = constraint  #dictionary e.g. valid_values: [ 1, 2, 4, 8 ] or greater_or_equal: 1
     
     def validate(self):
         for key, value in self.constraint.iteritems():

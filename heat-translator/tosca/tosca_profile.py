@@ -1,3 +1,6 @@
+from tosca.elements.node_template import NodeTemplate
+from tosca.inputs import Input
+
 SECTIONS = (VERSION, DESCRIPTION, INPUTS,
             NODE_TEMPLATES, OUTPUTS) = \
            ('tosca_definitions_version', 'description', 'inputs',
@@ -7,18 +10,31 @@ class Tosca(object):
     '''Read a Tosca profile'''
     def __init__(self, sourcedata):
         self.sourcedata = sourcedata
+        
+    def inputs(self):
+        inputs = []
+        for name, attrs in self._get_inputs().iteritems():
+            inputs.append(Input(name, attrs))
+        return inputs
 
-    def get_version(self):
+    def nodetemplates(self):
+        '''node templates objects. '''
+        nodetemplates = []
+        for nodetemplate, value in self._get_nodetemplates().iteritems():
+            nodetemplates.append(NodeTemplate(nodetemplate, value))
+        return nodetemplates
+
+    def _get_version(self):
         return self.sourcedata[VERSION]
 
-    def get_description(self):
+    def _get_description(self):
         return self.sourcedata[DESCRIPTION]
     
-    def get_inputs(self):
+    def _get_inputs(self):
         return self.sourcedata[INPUTS]
 
-    def get_nodetemplates(self):
+    def _get_nodetemplates(self):
         return self.sourcedata[NODE_TEMPLATES]
 
-    def get_outputs(self):
+    def _get_outputs(self):
         return self.sourcedata[OUTPUTS]

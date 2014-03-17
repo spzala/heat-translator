@@ -1,9 +1,9 @@
 import os
-from yaml_loader import Loader
+from yaml_parser import Parser
 from roottype import RootRelationshipType
 
-relationship_def_file = os.path.dirname(os.path.abspath(__file__)) + os.sep + "relationshiptype_def.yaml"
-relationship_def = Loader(relationship_def_file).load()
+relationship_def_file = os.path.dirname(os.path.abspath(__file__)) + os.sep + 'defs' + os.sep + "relationshiptype_def.yaml"
+relationship_def = Parser(relationship_def_file).load()
 
 class RelationshipType_Def(object):
     '''Load relationship types '''
@@ -26,16 +26,27 @@ class RelationshipType_Def(object):
 SECTIONS = (DERIVED_FROM, VALIDTARGETS) = \
            ('derived_from', 'valid_targets')
 
+RELATIONSHIP_TYPE = (DEPENDSON, HOSTEDON, CONNECTSTO) = \
+           ('dependency', 'host', 'database_endpoint')
+
 class RelatonshipType(RootRelationshipType):
     ''''Tosca relationship type'''
     def __init__(self, relationshiptype): 
         super(RelatonshipType, self).__init__()
-        self.relationshiptype = relationshiptype
+        if relationshiptype == DEPENDSON:
+            self.relationshiptype = 'tosca.relationships.DependsOn'
+        if relationshiptype == HOSTEDON:
+            self.relationshiptype = 'tosca.relationships.HostedOn'
+        if relationshiptype == CONNECTSTO:
+            self.relationshiptype = 'tosca.relations.ConnectsTo'
 
+    def name(self):
+        return self.relationshiptype
+    
     def derivedfrom(self, relationshiptype):
         return self.getKey(relationshiptype, DERIVED_FROM)
 
-    def validtargets(self, relationshiptype):
+    def valid_targets(self, relationshiptype):
         return self.getkey(relationshiptype, VALIDTARGETS)
     
     def getkey(self, nodetype, key):
@@ -43,4 +54,3 @@ class RelatonshipType(RootRelationshipType):
         for name, value in nodetype.iteritems():
             if name == key:
                 return value
-        

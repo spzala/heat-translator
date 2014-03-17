@@ -1,12 +1,7 @@
 import re
 import yaml
 
-from tosca.nodes.node_template import NodeTemplate
-from tosca.nodes.nodetypes_def import Nodetype_Def
-from tosca.nodes.relationship_graph import ToscaRelationshipGraph
-from tosca.nodes.roottype import RootNodeType
-from tosca.translation.translate_inputs import TranslateInputs
-from tosca.translation.translate_nodetemplates import TranslateNodeTemplates
+from tosca.elements.relationship_graph import ToscaRelationshipGraph
 
 SECTIONS = (VERSION, DESCRIPTION, PARAMETERS,
             RESOURCES, OUTPUTS) = \
@@ -29,9 +24,17 @@ class TOSCATranslator(object):
         self.tosca = tosca
  
     def translate(self):
+        self.test_graph()
         self._translate_inputs()
         self._translate_node_templates()
         self._translate_outputs()
+
+    def test_graph(self):
+        g = ToscaRelationshipGraph(self.tosca)
+        for k in g:
+            for w in k.get_relatednodetpls():
+                print("( %s , %s )" % (k.get_name(), w.get_name()))
+                print k.get_relationship(w).name()
 
     def _translate_inputs(self):
         #TODO
@@ -44,4 +47,3 @@ class TOSCATranslator(object):
     def _translate_outputs(self):
         #TODO
         pass
-    

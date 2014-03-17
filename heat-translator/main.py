@@ -3,9 +3,10 @@
 import os
 import sys
 from source import Source
-from tosca.translate import TOSCATranslator
+from translation.translate import TOSCATranslator
 from tosca.tosca_profile import Tosca
-from tosca.validate import ToscaValidator
+from tosca.validator import ToscaValidator
+from tosca.elements.relationship_graph import ToscaRelationshipGraph
 
 '''Entry point into the heat translation.
    Takes two user arguments, 1. type of translation (e.g. tosca) 2. Path to the file that needs to be translated.'''
@@ -13,6 +14,8 @@ from tosca.validate import ToscaValidator
 def main():
     sourcetype = sys.argv[1]
     path = sys.argv[2]
+    #sourcetype = 'tosca'
+    #path = '/home/openstack/toscacode/heat-translator/heat-translator/tosca/tests/tosca_single_instance_wordpress.yaml'
     if not sourcetype:
         print("Translation type is needed. For example, 'tosca'")
     if not path.endswith(".yaml"):

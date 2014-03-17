@@ -1,4 +1,3 @@
-from tosca.nodes.node_template import NodeTemplate
 
 SECTIONS = (TYPE, PROPERTIES, REQUIREMENTS, INTERFACES, LIFECYCLE, INPUT) = \
            ('type', 'properties', 'requirements', 'interfaces', 'lifecycle', 'input')

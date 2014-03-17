@@ -21,8 +21,8 @@ node_templates:
       # host image properties
       os_arch: x86_64 
       os_type: Linux  
-      os_distribution: Ubuntu  
-      os_version: 12
+      os_distribution: Fedora  
+      os_version: 18
 
 outputs:
   instance_ip:

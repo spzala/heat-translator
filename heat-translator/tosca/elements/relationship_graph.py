@@ -1,4 +1,5 @@
 from node_template import NodeTemplate
+from relationshiptype import RelatonshipType
 
 class NodeTpl:
     def __init__(self, nodetpl_object):
@@ -22,7 +23,7 @@ class ToscaRelationshipGraph:
     '''Graph with Tosca Nodes connected via a specific relationship'''
     def __init__(self, tosca_profile):
         self.tosca_profile = tosca_profile
-        self.nodetemplates = tosca_profile.get_nodetemplates()
+        self.nodetemplates = tosca_profile.nodetemplates()
         self.vertices = {}
         self.create()
 
@@ -47,23 +48,26 @@ class ToscaRelationshipGraph:
 
     def __iter__(self):
         return iter(self.vertices.values())
-  
+    
     def create(self):  
-        for nodetemplate, value in self.nodetemplates.iteritems():
-            ntpl = NodeTemplate(nodetemplate, value, self.tosca_profile)
+        for ntpl in self.nodetemplates:
             self.create_vertex(ntpl)
             if ntpl.has_relationship:
                 hosted_on = ntpl.get_hostedOn_relationship()
                 connects_to = ntpl.get_connectsTo_relationship()
                 depends_on = ntpl.get_dependsOn_relationship()
-            self.createedge(hosted_on, ntpl)
+            if hosted_on:
+                relationshiptype = RelatonshipType('host')
+                self.createedge(relationshiptype, hosted_on, ntpl)
             for connect in connects_to:
-                self.createedge(connect, ntpl)
+                relationshiptype = RelatonshipType('database_endpoint')
+                self.createedge(relationshiptype, connect, ntpl)
             for depends in depends_on:
-                self.createedge(depends, ntpl)
+                relationshiptype = RelatonshipType('dependency')
+                self.createedge(relationshiptype, depends, ntpl)
                         
-    def createedge(self, relationshiptype, node):
-        for name, val in self.nodetemplates.iteritems():
-            if name == relationshiptype:
-                etpl = NodeTemplate(name, val, self.tosca_profile)
-                self.create_edge(node, etpl, name)
+    def createedge(self, relationshiptype, node1, node2):
+        for tpl in self.nodetemplates:
+            if tpl.get_name() == node1:
+                etpl = NodeTemplate(node1, tpl.get_value())
+                self.create_edge(node2, etpl, relationshiptype)

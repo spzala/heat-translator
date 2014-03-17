@@ -1,11 +1,11 @@
-from yaml_loader import Loader
+from yaml_parser import Parser
 
 class Source(object):
     ''' 
     Load the source data.
     '''
     def __init__(self, path):
-        self.profile = Loader(path).load()
+        self.profile = Parser(path).load()
             
     def __contains__(self, key):
         return key in self.profile

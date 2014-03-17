@@ -1,15 +1,3 @@
-tosca.nodes.Root:
-   properties:
-      - property
-   capabilities:
-      - capability1: somecapbility
-   interfaces:
-      - create
-      - start
-      - stop
-      - install
-      - delete
-         
 tosca.nodes.Compute:
    derived_from: tosca.nodes.Root
    properties:

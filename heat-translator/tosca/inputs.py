@@ -1,5 +1,5 @@
-from tosca.nodes.constraints import Constraint
-from tosca.nodes.schema import Schema
+from tosca.elements.constraints import Constraint
+from tosca.elements.schema import Schema
 
 class InputParameters(object):
     def __init__(self, inputs):

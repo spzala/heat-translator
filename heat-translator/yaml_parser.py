@@ -6,9 +6,9 @@ else:
     yaml_loader = yaml.SafeLoader
     
 
-class Loader(object):
+class Parser(object):
     '''
-    Load YAML.
+    Parse YAML.
     '''
     def __init__(self, file_name):
         self.file_name = file_name

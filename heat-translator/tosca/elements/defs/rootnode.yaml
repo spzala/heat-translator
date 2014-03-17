@@ -1,0 +1,12 @@
+tosca.nodes.Root:
+   properties:
+      - property
+   capabilities:
+      - capability1: somecapbility
+   interfaces:
+      - create
+      - start
+      - stop
+      - install
+      - delete
+         
