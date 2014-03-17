@@ -21,9 +21,8 @@ class NodeTpl:
 
 class ToscaRelationshipGraph:
     '''Graph with Tosca Nodes connected via a specific relationship'''
-    def __init__(self, tosca_profile):
-        self.tosca_profile = tosca_profile
-        self.nodetemplates = tosca_profile.nodetemplates()
+    def __init__(self, nodetemplates):
+        self.nodetemplates = nodetemplates
         self.vertices = {}
         self.create()
 

@@ -1,5 +1,6 @@
 from tosca.elements.node_template import NodeTemplate
 from tosca.inputs import Input
+from tosca.elements.relationship_graph import ToscaRelationshipGraph
 
 SECTIONS = (VERSION, DESCRIPTION, INPUTS,
             NODE_TEMPLATES, OUTPUTS) = \
@@ -23,7 +24,10 @@ class Tosca(object):
         for nodetemplate, value in self._get_nodetemplates().iteritems():
             nodetemplates.append(NodeTemplate(nodetemplate, value))
         return nodetemplates
-
+    
+    def nodetpl_relationshipgraph(self):
+        return ToscaRelationshipGraph(self.nodetemplates())
+    
     def _get_version(self):
         return self.sourcedata[VERSION]
 

@@ -24,17 +24,9 @@ class TOSCATranslator(object):
         self.tosca = tosca
  
     def translate(self):
-        self.test_graph()
         self._translate_inputs()
         self._translate_node_templates()
         self._translate_outputs()
-
-    def test_graph(self):
-        g = ToscaRelationshipGraph(self.tosca)
-        for k in g:
-            for w in k.get_relatednodetpls():
-                print("( %s , %s )" % (k.get_name(), w.get_name()))
-                print k.get_relationship(w).name()
 
     def _translate_inputs(self):
         #TODO

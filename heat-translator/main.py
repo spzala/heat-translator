@@ -6,7 +6,6 @@ from source import Source
 from translation.translate import TOSCATranslator
 from tosca.tosca_profile import Tosca
 from tosca.validator import ToscaValidator
-from tosca.elements.relationship_graph import ToscaRelationshipGraph
 
 '''Entry point into the heat translation.
    Takes two user arguments, 1. type of translation (e.g. tosca) 2. Path to the file that needs to be translated.'''
