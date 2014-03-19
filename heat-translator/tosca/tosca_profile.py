@@ -11,6 +11,8 @@ class Tosca(object):
     '''Read a Tosca profile'''
     def __init__(self, sourcedata):
         self.sourcedata = sourcedata
+        self.version = self._get_version()
+        self.description = self._get_description()
         
     def inputs(self):
         inputs = []
@@ -24,6 +26,12 @@ class Tosca(object):
         for nodetemplate, value in self._get_nodetemplates().iteritems():
             nodetemplates.append(NodeTemplate(nodetemplate, value))
         return nodetemplates
+    
+    def inputs(self):
+        inputs = []
+        for name, attrs in self._get_inputs().iteritems():
+            inputs.append(Input(name, attrs))
+        return inputs
     
     def nodetpl_relationshipgraph(self):
         return ToscaRelationshipGraph(self.nodetemplates())

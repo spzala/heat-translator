@@ -1,5 +1,4 @@
 import os
-from roottype import RootNodeType
 from schema import Schema
 from yaml_parser import Parser
 
@@ -10,7 +9,7 @@ SECTIONS = (DERIVED_FROM, PROPERTIES, REQUIREMENTS,
             INTERFACES, CAPABILITIES) = \
            ('derived_from', 'properties', 'requirements', 'interfaces', 'capabilities')
 
-class NodeType(RootNodeType):
+class NodeType(object):
     '''Tosca built-in node type'''
     def __init__(self, type):
         super(NodeType, self).__init__()
@@ -31,19 +30,19 @@ class NodeType(RootNodeType):
         return self.defs[key]
     
     def derivedfrom(self):
-        return self.getKey(self.type, DERIVED_FROM)
+        return self._get_value(DERIVED_FROM)
 
     def properties(self):
-        return self.getkey(self.type, PROPERTIES)
+        return self._get_value(PROPERTIES)
     
     def requirements(self):
-        return self.getkey(self.type, REQUIREMENTS)
+        return self._get_value(REQUIREMENTS)
     
     def interfaces(self):
-        return self.getkey(self.type, INTERFACES)
+        return self._get_value(INTERFACES)
     
     def capabilities(self):
-        return self.getkey(self.type, CAPABILITIES) 
+        return self._get_value(CAPABILITIES) 
     
     def schema(self):
         return Schema(self.type)
@@ -53,16 +52,21 @@ class NodeType(RootNodeType):
     
     def parent_node(self):
         parent_node = None
-        derived = self.properties()
-        if derived:
-            if 'derived_from' in derived:
-                parent_node = derived['derived_from']
-        if parent_node == None:
-            parent_node = RootNodeType()
+        root = 'tosca.nodes.Root'
+        if self.type != root:
+            derived = self.derivedfrom()
+            derived = None
+            if derived:
+                if 'derived_from' in derived:
+                    pass 
+                    #parent_node = derived['derived_from']
+            if parent_node == None:
+                parent_node = NodeType('tosca.nodes.Root')
+            return parent_node
     
-    def getkey(self, nodetype, key):
-        nodetype = self.defs[nodetype]
-        for name, value in nodetype.iteritems():
-            if name == key:
-                return value
+    def _get_value(self, type):
+        d = self[self.type]
+        for a, b in d.iteritems():
+            if a == type:
+                return b
         

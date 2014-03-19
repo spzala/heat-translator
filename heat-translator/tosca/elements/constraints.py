@@ -1,13 +1,14 @@
 import numbers    
-
-CONSTRAINTS = (EQUAL, GREATER_THAN,
+                
+class Constraint(object): 
+    
+    CONSTRAINTS = (EQUAL, GREATER_THAN,
                 GREATER_OR_EQUAL, LESS_THAN, LESS_OR_EQUAL, IN_RANGE, VALID_VALUES,
                 LENGTH, MIN_LENGHT, MAX_LENGTH, PATTERN) = \
                 ('equal', 'greater_than', 'greater_or_equal',
                 'less_than', 'less_or_equal', 'in_range', 'valid_values', 'length', 'min_length',
                 'max_length', 'pattern')
                 
-class Constraint(object): 
     def __init__(self, propertyname, value, constraint): 
         self.propertyname = propertyname
         self.value = value
@@ -15,7 +16,7 @@ class Constraint(object):
     
     def validate(self):
         for key, value in self.constraint.iteritems():
-            if key == GREATER_OR_EQUAL:
+            if key == self.GREATER_OR_EQUAL:
                 self.validate_greater_than(value)
         
     def validate_equal(self):

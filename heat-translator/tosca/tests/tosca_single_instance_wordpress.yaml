@@ -7,12 +7,14 @@ inputs:
   cpus:
     type: number
     description: Number of CPUs for the server.
+    constraints:
+      - valid_values: [ 1, 2, 4, 8 ]
   db_name:
     type: string
     description: The name of the database.
   db_user:
     type: string
-    description: The username of the DB user.
+    description: The user name of the DB user.
   db_pwd:
     type: string
     description: The WordPress database admin account password.

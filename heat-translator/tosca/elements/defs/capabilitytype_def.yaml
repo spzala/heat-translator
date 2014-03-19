@@ -25,3 +25,5 @@ tosca.capabilities.Endpoint:
 
 tosca.capabilities.DatabaseEndpoint:
   derived_from: tosca.capabilities.Endpoint
+  properties:
+    port_name: port

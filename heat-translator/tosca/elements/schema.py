@@ -6,6 +6,7 @@ schema = Parser(schema_file).load()
 
 class Schema(object):
     '''Node type schema'''
+    
     TYPES = (
         INTEGER,
         STRING, NUMBER, BOOLEAN,
@@ -17,10 +18,11 @@ class Schema(object):
     )
     
     KEYS = (
-        TYPE, DESCRIPTION, DEFAULT, CONSTRAINTS,
+        TYPE, REQUIRED, DESCRIPTION, DEFAULT, CONSTRAINTS,
     ) = (
-        'type', 'description', 'default', 'constraints'
+        'type', 'required', 'description', 'default', 'constraints'
     )
+    
     def __init__(self, nodetype): 
         self.nodetype = nodetype
         self.nodes = self._set_nodes()
@@ -58,9 +60,7 @@ class Schema(object):
         return schema
     
     def get_type(self, property_name):
-        pass
-        #TODO
-        #return self.get_schema(property_name)['type']
+        return self.get_schema(property_name)[self.TYPE]
     
     def get_constraints(self, property_name):
         s = self.get_schema(property_name)
@@ -68,6 +68,8 @@ class Schema(object):
             return s[self.CONSTRAINTS]
     
     def get_description(self, property_name):
+        import pdb
+        pdb.set_trace()
         return self.get_schema(property_name)[self.DESCRIPTION]   
     
     def get_greater_or_equal(self, property_name):
@@ -84,6 +86,6 @@ class Schema(object):
         schemata = self.get_schemata()
         for prop_key, prop_vale in schemata.iteritems():
             for attr, value in prop_vale.iteritems():
-                if attr == 'required' and value:
+                if attr == self.REQUIRED and value:
                     required.append(prop_key)
         return required

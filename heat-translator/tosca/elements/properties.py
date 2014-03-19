@@ -32,7 +32,7 @@ class Property(object):
         return self.name
     
     def validate(self):
-        self.validate_data_type()
+        #self.validate_data_type()  #TODO: can't do data type validation because user input is not provided until runtime
         self.validate_constraints()
     
     def validate_data_type(self):
@@ -40,6 +40,8 @@ class Property(object):
         if data_type == Schema.STRING:
             return Constraint.validate_string(self.value)
         elif data_type == Schema.INTEGER:
+            import pdb
+            pdb.set_trace()
             return Constraint.validate_integer(self.value)
         elif data_type == Schema.NUMBER:
             return Constraint.validate_number(self.value)

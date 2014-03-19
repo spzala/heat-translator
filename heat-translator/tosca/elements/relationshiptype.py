@@ -1,6 +1,5 @@
 import os
 from yaml_parser import Parser
-from roottype import RootRelationshipType
 
 relationship_def_file = os.path.dirname(os.path.abspath(__file__)) + os.sep + 'defs' + os.sep + "relationshiptype_def.yaml"
 relationship_def = Parser(relationship_def_file).load()
@@ -29,7 +28,7 @@ SECTIONS = (DERIVED_FROM, VALIDTARGETS) = \
 RELATIONSHIP_TYPE = (DEPENDSON, HOSTEDON, CONNECTSTO) = \
            ('dependency', 'host', 'database_endpoint')
 
-class RelatonshipType(RootRelationshipType):
+class RelatonshipType(object):
     ''''Tosca relationship type'''
     def __init__(self, relationshiptype): 
         super(RelatonshipType, self).__init__()

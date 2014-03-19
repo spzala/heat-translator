@@ -11,10 +11,10 @@ from tosca.validator import ToscaValidator
    Takes two user arguments, 1. type of translation (e.g. tosca) 2. Path to the file that needs to be translated.'''
 
 def main():
-    sourcetype = sys.argv[1]
-    path = sys.argv[2]
-    #sourcetype = 'tosca'
-    #path = '/home/openstack/toscacode/heat-translator/heat-translator/tosca/tests/tosca_single_instance_wordpress.yaml'
+    #sourcetype = sys.argv[1]
+    #path = sys.argv[2]
+    sourcetype = 'tosca'
+    path = '/home/openstack/toscacode/heat-translator/heat-translator/tosca/tests/tosca_compute_only.yaml'
     if not sourcetype:
         print("Translation type is needed. For example, 'tosca'")
     if not path.endswith(".yaml"):

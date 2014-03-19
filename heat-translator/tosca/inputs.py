@@ -17,7 +17,7 @@ class InputParameters(object):
     def __getitem__(self, key):
         '''Get a input value.'''
         return self.inputs[key]
-
+    
 class Input(object):
     def __init__(self, name, schema):
         self.name = name
