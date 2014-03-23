@@ -1,5 +1,5 @@
 from tosca.elements.constraints import Constraint
-from tosca.elements.schema import Schema
+from tosca.properties_schema import Schema
 
 class InputParameters(object):
     def __init__(self, inputs):
@@ -56,7 +56,7 @@ class Input(object):
             self.validate_constraints(self.get_constraints())
         
     def validate_type(self, input_type):
-        if input_type not in Schema.TYPES:
+        if input_type not in Schema.PROPERTIES_TYPES:
             raise ValueError('Invalid type %s' % type)
     
     def validate_constraints(self, constraints):

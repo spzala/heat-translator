@@ -14,7 +14,7 @@ def main():
     #sourcetype = sys.argv[1]
     #path = sys.argv[2]
     sourcetype = 'tosca'
-    path = '/home/openstack/toscacode/heat-translator/heat-translator/tosca/tests/tosca_compute_only.yaml'
+    path = '/home/openstack/toscacode/heat-translator/heat-translator/tosca/tests/tosca_single_instance_wordpress.yaml'
     if not sourcetype:
         print("Translation type is needed. For example, 'tosca'")
     if not path.endswith(".yaml"):
@@ -33,9 +33,7 @@ def translate(sourcetype, path):
     tpl = Source(path)
     output = None
     if sourcetype == "tosca":
-        tosca = Tosca(tpl)
-        ToscaValidator(tosca).validate()
-        output = TOSCATranslator(tosca).translate()
+        pass
     return output
         
 def write_output(output):

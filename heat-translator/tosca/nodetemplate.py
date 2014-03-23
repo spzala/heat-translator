@@ -2,37 +2,28 @@ from capabilitytype import CapabilityType
 from properties import Property
 from properties import Properties
 from relationshiptype import RelatonshipType
-from nodetype import NodeType
 from tosca.inputs import Input
 from tosca.inputs import InputParameters
+import nodetype
 
-class NodeTemplate(NodeType):
+class NodeTemplate(nodetype.NodeType):
     ''' Node template from a Tosca profile.'''
-    def __init__(self, name, nodetemplate, tosca_profile=None):
+    
+    '''relationship variable holds relevant relationship type objects '''
+    hostedon = []
+    dependson = []
+    connectsto = []
+    def __init__(self, name, nodetemplate):
         super(NodeTemplate, self).__init__(nodetemplate['type'])
         self.name = name
         self.nodetemplate = nodetemplate
-        self.tosca_profile = None
-        if tosca_profile:
-            self.tosca_profile = tosca_profile
         if 'properties' in self.nodetemplate:
             self.profile_properties = Properties(self.nodetemplate['properties'])
-            
-        if self.has_hostedon_relationship():
-            self.hosted_on = RelatonshipType('host')
-        if self.has_dependson_relationship():
-            self.depends_on = RelatonshipType('dependency')
-        if self.has_connectto_relationship():
-            self.connects_to = RelatonshipType('database_endpoint')
-            
         if self.has_capabilities():
             for capability in self.capabilities_type():
                 self.nodetype_capabilities = []
                 self.nodetype_capabilities.append(CapabilityType(capability))
-        
-        #print self.parent_node()
-        #print self.properties()
-        #print self.schema().get_description('num_cpus')
+        self.relationship()
         
     def get_name(self):
         return self.name
@@ -95,10 +86,8 @@ class NodeTemplate(NodeType):
     
     def get_input_ref(self, ref):
         #get input reference, for example, get_input: db_user should return default value of db_user
-        if self.tosca_profile:
-            for input in self.tosca_profile.inputs():
-                if input.name == ref:
-                    return input.get_default()
+        pass
+    
     '''
     @classmethod
     def get_property_ref(cls, ref, t):
@@ -126,46 +115,27 @@ class NodeTemplate(NodeType):
             for key in capabilities.iterkeys():
                 caps.append(key)
             return caps
+
+    def implicit_relationship(self):
+        pass
+    
+    def relationship(self, key):
+        ''' Relationship can be found in a two ways:
+        1. explicit: Under the 'requirement' relationship is defined using a 
+           - keyword (e.g. dependsOn) 
+             find the keyword under the nodetype definition requirement section. Look into the capability 
+             of the nodetype provided as value. Find the capability type for the keyword and use that to define
+             relationship.
+           - with a list (e.g. 
+                            node: server 
+                            relationship_type: hostedOn)
+        2. implicit: no 'requirement' is provided then relationship need to be defined using the nodetype definition.
+        '''
+        pass
+
     
     def relationship(self):
-        relationship = []
-        relationship.append(self.get_hostedOn_relationship())
-        relationship.append(self.get_dependsOn_relationship())
-        relationship.append(self.get_connectsTo_relationship())
-    
-    def get_hostedOn_relationship(self):
-        host = None
-        hosted_on = self._get_relationship('host')
-        if hosted_on:
-            for r in  self._get_relationship('host'):
-                host = r
-        return host
-    
-    def get_dependsOn_relationship(self):
-        return self._get_relationship('dependency')
-    
-    def get_connectsTo_relationship(self):
-        return self._get_relationship('database_endpoint')
-
-    def _get_relationship(self, key):
-        rv = []
-        if 'requirements' in self.nodetemplate:
-            rship =self.nodetemplate['requirements']
-            if self.has_relationship():
-                for r in rship:
-                    for name, value in r.iteritems():
-                        if name == key:
-                            rv.append(value)
-        return rv
-    
-    def has_hostedon_relationship(self):
-        return self.get_hostedOn_relationship() is not None
-    
-    def has_dependson_relationship(self):
-        return self.get_dependsOn_relationship() is not None
-    
-    def has_connectto_relationship(self):
-        return self.get_connectsTo_relationship() is not None
+        pass
 
     def get_capabilities(self):
         if  self.has_capabilities():

@@ -1,6 +1,5 @@
-from tosca.elements.node_template import NodeTemplate
-from tosca.inputs import Input
-from tosca.elements.relationship_graph import ToscaRelationshipGraph
+#from tosca.inputs import Input
+#from tosca.elements.relationship_graph import ToscaRelationshipGraph
 
 SECTIONS = (VERSION, DESCRIPTION, INPUTS,
             NODE_TEMPLATES, OUTPUTS) = \
@@ -13,6 +12,10 @@ class Tosca(object):
         self.sourcedata = sourcedata
         self.version = self._get_version()
         self.description = self._get_description()
+        self.inputs = self.inputs()
+        self.nodetemplates = self.nodetemplates()
+        self.noderoot = self.nodetpl_relationshipgraph()
+        self.output = self.output()
         
     def inputs(self):
         inputs = []
@@ -23,9 +26,16 @@ class Tosca(object):
     def nodetemplates(self):
         '''node templates objects. '''
         nodetemplates = []
-        for nodetemplate, value in self._get_nodetemplates().iteritems():
-            nodetemplates.append(NodeTemplate(nodetemplate, value))
+        tpls = self._get_nodetemplates()
+        for name, value in tpls.iteritems():
+            nodetemplates.append(NodeTemplate(name, value))
         return nodetemplates
+    
+    def nodetemplate(self, name):
+        '''node templates objects. '''
+        for nodetemplate, value in self._get_nodetemplates().iteritems():
+            if nodetemplate == name:
+                return value 
     
     def inputs(self):
         inputs = []
@@ -33,8 +43,12 @@ class Tosca(object):
             inputs.append(Input(name, attrs))
         return inputs
     
+    def output(self):
+        #TODO
+        pass
+    
     def nodetpl_relationshipgraph(self):
-        return ToscaRelationshipGraph(self.nodetemplates())
+        return ToscaRelationshipGraph(self.nodetemplates)
     
     def _get_version(self):
         return self.sourcedata[VERSION]

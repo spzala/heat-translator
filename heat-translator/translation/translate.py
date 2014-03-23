@@ -1,7 +1,7 @@
 import re
 import yaml
 
-from tosca.elements.relationship_graph import ToscaRelationshipGraph
+#from tosca.elements.relationship_graph import ToscaRelationshipGraph
 from tosca.elements.nodetype import NodeType
 
 SECTIONS = (VERSION, DESCRIPTION, PARAMETERS,
@@ -25,13 +25,6 @@ class TOSCATranslator(object):
         self.tosca = tosca
  
     def translate(self):
-        #import pdb
-        #pdb.set_trace()
-        #print self.properties()
-        #print self.derivedfrom()
-        #n = NodeType('tosca.nodes.WebApplication.WordPress')
-        #print type(n)
-        #print n['tosca.nodes.Compute']
         self._translate_inputs()
         self._translate_node_templates()
         self._translate_outputs()

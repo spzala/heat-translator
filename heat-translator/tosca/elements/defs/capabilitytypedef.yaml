@@ -6,7 +6,7 @@ tosca.capabilities.Feature:
 tosca.capabilities.Container:
   derived_from: tosca.capabilities.Feature
   properties: 
-    containee_types: [ node_type ]
+    containee_types
 
 tosca.capabilities.Endpoint:
   derived_from: tosca.capabilities.Feature

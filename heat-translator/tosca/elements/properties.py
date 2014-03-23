@@ -1,53 +1,74 @@
+from yaml_parser import Parser
+import os
+from entitytype import EntityType
 from constraints import Constraint
-from schema import Schema
+
+schema_file = os.path.dirname(os.path.abspath(__file__)) + os.sep + 'defs' + os.sep + 'properties_schema.yaml'
+properties = Parser(schema_file).load()
 
 class Properties(object):
-    ''' Node type properties '''
-    def __init__(self, properties):
-        self.properties = properties
-
+    '''Tosca built-in properties types'''
+    def __init__(self):
+        self.defs = properties
+    
     def __contains__(self, key):
-        return key in self.properties
+        return key in self.defs
 
     def __iter__(self):
-        return iter(self.properties)
+        return iter(self.defs)
 
     def __len__(self):
-        return len(self.properties)
+        return len(self.defs)
 
     def __getitem__(self, key):
-        '''Get a property value.'''
-        return self.properties[key]
+        '''Get a section.'''
+        return self.defs[key]
     
-class Property(object):
-    def __init__(self, name, nodetype, value):
+class Property(EntityType):
+    '''Property type '''
+    def __init__(self, name, type, value=None): 
         self.name = name
-        self.nodetype = nodetype
-        self.value = value
-    
+        self.type = type
+        self.schemata =  Properties()[type]
+        if value:
+            self.value = value
+
     def is_required(self):
-        return Schema(self.nodetype).is_required(self.name)
+        ''' return true if property is a required for a given node '''
+        return self.name in self.required()
+
+    def get_schema(self, property_name):
+        ''' get schema for a given property'''
+        schema = {}
+        for prop_key, prop_vale in self.schemata.iteritems():
+            if prop_key == property_name:
+                for attr, value in prop_vale.iteritems():
+                    schema[attr] = value
+        return schema
     
-    def get_name(self):
-        return self.name
+    def get_constraints(self):
+        s = self.get_schema(self.name)
+        if self.CONSTRAINTS in s:
+            return s[self.CONSTRAINTS]
+    
+    def get_description(self, property_name):
+        return self.get_schema(property_name)[self.DESCRIPTION]   
+                
+    ''' list all the requirement for a given node type '''
+    def required(self):
+        required = []
+        for prop_key, prop_vale in self.schemata.iteritems():
+            for attr, value in prop_vale.iteritems():
+                if attr == self.REQUIRED and value:
+                    required.append(prop_key)
+        return required
     
     def validate(self):
         #self.validate_data_type()  #TODO: can't do data type validation because user input is not provided until runtime
         self.validate_constraints()
     
-    def validate_data_type(self):
-        data_type = Schema(self.nodetype).get_type(self.name)
-        if data_type == Schema.STRING:
-            return Constraint.validate_string(self.value)
-        elif data_type == Schema.INTEGER:
-            import pdb
-            pdb.set_trace()
-            return Constraint.validate_integer(self.value)
-        elif data_type == Schema.NUMBER:
-            return Constraint.validate_number(self.value)
-    
     def validate_constraints(self):
-        constraints = Schema(self.nodetype).get_constraints(self.name)
+        constraints = self.get_constraints()
         if constraints:
             for constraint in constraints:
                 Constraint(self.name, self.value, constraint).validate()

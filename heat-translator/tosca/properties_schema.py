@@ -1,27 +1,12 @@
 from yaml_parser import Parser
 import os
+from tosca.elements.entitytype import EntityType
 
-schema_file = os.path.dirname(os.path.abspath(__file__)) + os.sep + 'defs' + os.sep + 'nodetypeschema.yaml'
+schema_file = os.path.dirname(os.path.abspath(__file__)) + os.sep + 'elements/defs' + os.sep + 'properties_schema.yaml'
 schema = Parser(schema_file).load()
 
-class Schema(object):
+class Schema(EntityType):
     '''Node type schema'''
-    
-    TYPES = (
-        INTEGER,
-        STRING, NUMBER, BOOLEAN,
-        LIST
-    ) = (
-        'integer',
-        'string', 'number', 'boolean',
-        'list'
-    )
-    
-    KEYS = (
-        TYPE, REQUIRED, DESCRIPTION, DEFAULT, CONSTRAINTS,
-    ) = (
-        'type', 'required', 'description', 'default', 'constraints'
-    )
     
     def __init__(self, nodetype): 
         self.nodetype = nodetype
@@ -68,8 +53,6 @@ class Schema(object):
             return s[self.CONSTRAINTS]
     
     def get_description(self, property_name):
-        import pdb
-        pdb.set_trace()
         return self.get_schema(property_name)[self.DESCRIPTION]   
     
     def get_greater_or_equal(self, property_name):

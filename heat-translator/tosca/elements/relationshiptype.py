@@ -1,10 +1,11 @@
 import os
 from yaml_parser import Parser
+from statefulentitytype import StatefulEntityType
 
-relationship_def_file = os.path.dirname(os.path.abspath(__file__)) + os.sep + 'defs' + os.sep + "relationshiptype_def.yaml"
+relationship_def_file = os.path.dirname(os.path.abspath(__file__)) + os.sep + 'defs' + os.sep + "relationshiptypedef.yaml"
 relationship_def = Parser(relationship_def_file).load()
 
-class RelationshipType_Def(object):
+class RelationshipTypeDef(object):
     '''Load relationship types '''
     def __init__(self):
         self.defs = relationship_def
@@ -28,28 +29,30 @@ SECTIONS = (DERIVED_FROM, VALIDTARGETS) = \
 RELATIONSHIP_TYPE = (DEPENDSON, HOSTEDON, CONNECTSTO) = \
            ('dependency', 'host', 'database_endpoint')
 
-class RelatonshipType(object):
-    ''''Tosca relationship type'''
-    def __init__(self, relationshiptype): 
-        super(RelatonshipType, self).__init__()
-        if relationshiptype == DEPENDSON:
-            self.relationshiptype = 'tosca.relationships.DependsOn'
-        if relationshiptype == HOSTEDON:
-            self.relationshiptype = 'tosca.relationships.HostedOn'
-        if relationshiptype == CONNECTSTO:
-            self.relationshiptype = 'tosca.relations.ConnectsTo'
+    
+class RelationshipType(StatefulEntityType):
+    '''Tosca built-in relationship type'''
+    def __init__(self, type):
+        super(RelationshipType, self).__init__()
+        self.type = type
+        self.defs = RelationshipTypeDef()[type]
 
     def name(self):
-        return self.relationshiptype
+        return self.type
     
-    def derivedfrom(self, relationshiptype):
-        return self.getKey(relationshiptype, DERIVED_FROM)
+    def derivedfrom(self):
+        return self._get_value(DERIVED_FROM)
 
-    def valid_targets(self, relationshiptype):
-        return self.getkey(relationshiptype, VALIDTARGETS)
+    def valid_targets(self):
+        return self._get_value(VALIDTARGETS)
     
-    def getkey(self, nodetype, key):
-        nodetype = self.defs[nodetype]
-        for name, value in nodetype.iteritems():
-            if name == key:
-                return value
+    def _get_value(self, type):
+        if type in self.defs:
+            return self.defs[type]
+        
+class Relationship(object):
+    '''node type relationship ''' 
+    def __init__(self, type, related_from, related_to): 
+        self.type = type
+        self.related_from = related_from
+        self.related_to = related_to  
