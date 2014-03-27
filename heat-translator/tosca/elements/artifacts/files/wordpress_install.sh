@@ -1,1 +1,1 @@
-yum -y install wordpress
+

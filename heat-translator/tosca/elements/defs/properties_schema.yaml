@@ -1,3 +1,5 @@
+tosca.nodes.Root:
+
 tosca.nodes.Compute:
   num_cpus:
     required: no

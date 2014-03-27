@@ -24,7 +24,7 @@ class Properties(object):
         '''Get a section.'''
         return self.defs[key]
     
-class Property(EntityType):
+class PropertyDef(EntityType):
     '''Property type '''
     def __init__(self, name, type, value=None): 
         self.name = name

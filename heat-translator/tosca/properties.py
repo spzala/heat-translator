@@ -1,4 +1,4 @@
-from constraints import Constraint
+from tosca.elements.constraints import Constraint
 from properties_schema import Schema
 
 class Properties(object):

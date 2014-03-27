@@ -2,7 +2,7 @@ import os
 from yaml_parser import Parser
 from statefulentitytype import StatefulEntityType
 from capabilitytype import Capabilities
-from properties import Property
+from properties import PropertyDef
 import relationshiptype
 
 nodetype_def_file = os.path.dirname(os.path.abspath(__file__)) + os.sep + 'defs' + os.sep + "nodetypesdef.yaml"
@@ -36,6 +36,7 @@ class NodeType(StatefulEntityType):
         super(NodeType, self).__init__()
         self.type = type
         self.defs = NodeTypes()[type]
+        self.related = {}
     
     def derivedfrom(self):
         return self._get_value(DERIVED_FROM)
@@ -44,15 +45,10 @@ class NodeType(StatefulEntityType):
         '''returns a list of property objects '''
         properties = []
         props = self._get_value(PROPERTIES)
-        for prop in props:
-            properties.append(Property(prop, self.type))
+        if props:
+            for prop in props:
+                properties.append(PropertyDef(prop, self.type))
         return properties
-    
-    def requirements(self):
-        return self._get_value(REQUIREMENTS)
-
-    def has_relationship(self):
-        return self.relationship()
     
     def relationship(self):
         '''returns a dictionary containing relationship to a particular node type '''
@@ -64,6 +60,27 @@ class NodeType(StatefulEntityType):
                     relation = self.get_relation(x, y)
                     relationship[relation] = y
         return relationship
+    
+    def capabilities(self): 
+        '''returns a list of capability objects '''
+        capabilities = []
+        self.prop_val = None
+        caps = self._get_value(CAPABILITIES) 
+        if caps:
+            for name, value in caps.iteritems():
+                for x, y in value.iteritems():
+                    if x == 'type':
+                        self.__set_cap_type(y)
+                    if x == 'properties':
+                        self.__set_prop_type(y)
+                capabilities.append(Capabilities(name, self.type_val, self.prop_val))
+        return capabilities
+        
+    def requirements(self):
+        return self._get_value(REQUIREMENTS)
+
+    def has_relationship(self):
+        return self.relationship()
     
     @classmethod
     def get_relation(cls, key, type):
@@ -81,21 +98,6 @@ class NodeType(StatefulEntityType):
                 if relation:
                     break
         return relation
-    
-    def capabilities(self): 
-        '''returns a list of capability objects '''
-        capabilities = []
-        self.prop_val = None
-        caps = self._get_value(CAPABILITIES) 
-        for name, value in caps.iteritems():
-            for x, y in value.iteritems():
-                if x == 'type':
-                    self.__set_cap_type(y)
-                if x == 'properties':
-                    self.__set_prop_type(y)
-            capabilities.append(Capabilities(name, self.type_val, self.prop_val))
-        return capabilities
-    
        
     def lifecycle_operations(self):
        return self.interfaces_node_lifecycle_operations
@@ -127,7 +129,7 @@ class NodeType(StatefulEntityType):
         for key, value in self.get_capability(name):
             if key == type:
                 return value
-    
+            
     def parent_node(self):
         parent_node = None
         root = 'tosca.nodes.Root'
@@ -138,10 +140,23 @@ class NodeType(StatefulEntityType):
                 if 'derived_from' in derived:
                     parent_node = derived['derived_from']
             if parent_node == None:
-                parent_node = NodeType('tosca.nodes.Root')
+                parent_node = NodeType(root)
             return parent_node
     
     def _get_value(self, type):
         if type in self.defs:
             return self.defs[type]
+        
+    def add_next(self,nodetpl,relationship):
+        self.related[nodetpl] = relationship
+
+    def get_relatednodes(self):
+        return self.related.keys()
+
+    def get_type(self):
+        return self.type
+
+    def get_relationship(self, nodetpl):
+        if nodetpl in self.related:
+            return self.related[nodetpl]
     

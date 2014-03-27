@@ -1,25 +1,7 @@
 from nodetype import *
 from relationshiptype import RelationshipType
 
-class Node:
-    def __init__(self, nodetpl_object):
-        self.type = nodetpl_object.type
-        self.related = {}
-
-    def add_next(self,nodetpl,relationship):
-        self.related[nodetpl] = relationship
-
-    def get_relatednodes(self):
-        return self.related.keys()
-
-    def get_type(self):
-        return self.type
-
-    def get_relationship(self, nodetpl):
-        if nodetpl in self.related:
-            return self.related[nodetpl]
-
-class RelationshipGraph:
+class ToscaGraph:
     '''Graph of Tosca Nodes connected via a specific relationship'''
     def __init__(self):
         self.nodetypes = self.nodetypes()
@@ -32,39 +14,34 @@ class RelationshipGraph:
             nodetypes.append(NodeType(node))
         return nodetypes
             
-    def create_vertex(self, ntpl):
-        nodetpl = Node(ntpl)
-        self.vertices[ntpl] = nodetpl
-        return nodetpl
+    def create_vertex(self, node):
+        self.vertices[node.type] = node
 
-    def create_edge(self, ntpl1, ntpl2, relationship):
-        if ntpl1 not in self.vertices:
-            vertex = self.create_vertex(ntpl1)
-        if ntpl2 not in self.vertices:
-            vertex = self.create_vertex(ntpl2)
-        self.vertices[ntpl1].add_next(self.vertices[ntpl2], relationship)
+    def create_edge(self, node1, node2, relationship):
+        if node1 not in self.vertices:
+            self.create_vertex(node1)
+        if node2 not in self.vertices:
+            self.create_vertex(node2)
+        self.vertices[node1.type].add_next(self.vertices[node2.type], relationship)
 
     def get_vertices(self):
         return self.vertices.keys()
     
-    def get_vertex(self, ntpl):
+    def get_vertex(self, node):
         if ntpl in self.vertices:
-            return self.vertices[n]
+            return self.vertices[node]
 
     def __iter__(self):
         return iter(self.vertices.values())
     
     def create(self):  
-        for ntpl in self.nodetypes:
-            self.create_vertex(ntpl)
-            if ntpl.has_relationship():
-                relation = ntpl.relationship()
-                for key, value in relation.iteritems():
-                    self.createedge(key, value, ntpl)
-                        
-    def createedge(self, relationshiptype, node1, node2):
-        rtype = RelationshipType(relationshiptype)
-        for tpl in self.nodetypes:
-            if tpl.type == node1:
-                etpl = NodeType(node1)
-                self.create_edge(node2, etpl, rtype)
+        for node in self.nodetypes:
+            if node.has_relationship():
+                relation = node.relationship()
+                for relation, nodetype in relation.iteritems():
+                    rtype = RelationshipType(relation)
+                    for tpl in self.nodetypes:
+                        if tpl.type == nodetype:
+                            etpl = NodeType(nodetype)
+                            self.create_edge(node, etpl, rtype)
+            self.create_vertex(node)

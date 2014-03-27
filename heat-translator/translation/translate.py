@@ -1,7 +1,7 @@
 import re
 import yaml
 
-#from tosca.elements.relationship_graph import ToscaRelationshipGraph
+#from tosca.elements.relationship_graph import ToscaGraph
 from tosca.elements.nodetype import NodeType
 
 SECTIONS = (VERSION, DESCRIPTION, PARAMETERS,

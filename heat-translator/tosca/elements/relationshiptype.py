@@ -50,9 +50,3 @@ class RelationshipType(StatefulEntityType):
         if type in self.defs:
             return self.defs[type]
         
-class Relationship(object):
-    '''node type relationship ''' 
-    def __init__(self, type, related_from, related_to): 
-        self.type = type
-        self.related_from = related_from
-        self.related_to = related_to  
