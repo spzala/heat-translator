@@ -1,5 +1,5 @@
 from tosca.elements.constraints import Constraint
-from tosca.properties_schema import Schema
+from tosca.elements.properties import PropertyDef
 
 class InputParameters(object):
     def __init__(self, inputs):
