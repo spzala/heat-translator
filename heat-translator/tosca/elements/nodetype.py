@@ -20,7 +20,7 @@ SECTIONS = (DERIVED_FROM, PROPERTIES, REQUIREMENTS,
 class NodeTypes(object):
     '''Tosca built-in node types'''
     def __init__(self):
-        logger.info('fdf')
+        logger.info('adsf')
         self.defs = nodetype_def
 
     def __contains__(self, key):
