@@ -7,6 +7,7 @@ SECTIONS = (VERSION, DESCRIPTION, INPUTS,
            ('tosca_definitions_version', 'description', 'inputs',
             'node_templates', 'outputs')
 
+
 class Tosca(object):
     '''Read a Tosca profile'''
     def __init__(self, sourcedata):
@@ -17,7 +18,7 @@ class Tosca(object):
         self.nodetemplates = self.nodetemplates()
         self.noderoot = self.nodetpl_relationshipgraph()
         self.output = self.output()
-        
+
     def inputs(self):
         inputs = []
         for name, attrs in self._get_inputs().iteritems():
@@ -31,33 +32,33 @@ class Tosca(object):
         for name, value in tpls.iteritems():
             nodetemplates.append(NodeTemplate(name, value))
         return nodetemplates
-    
+
     def nodetemplate(self, name):
         '''node templates objects. '''
         for nodetemplate, value in self._get_nodetemplates().iteritems():
             if nodetemplate == name:
-                return value 
-    
+                return value
+
     def inputs(self):
         inputs = []
         for name, attrs in self._get_inputs().iteritems():
             inputs.append(Input(name, attrs))
         return inputs
-    
+
     def output(self):
         #TODO
         pass
-    
+
     def nodetpl_relationshipgraph(self):
         pass
         #return ToscaGraph(self.nodetemplates)
-    
+
     def _get_version(self):
         return self.sourcedata[VERSION]
 
     def _get_description(self):
         return self.sourcedata[DESCRIPTION]
-    
+
     def _get_inputs(self):
         return self.sourcedata[INPUTS]
 

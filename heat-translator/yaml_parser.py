@@ -4,7 +4,7 @@ if hasattr(yaml, 'CSafeLoader'):
     yaml_loader = yaml.CSafeLoader
 else:
     yaml_loader = yaml.SafeLoader
-    
+
 
 class Parser(object):
     '''
@@ -15,7 +15,7 @@ class Parser(object):
 
     def load(self):
         f = open(self.file_name, 'r')
-        profile = f.read() # string
+        profile = f.read()  # string
         try:
             doc = yaml.load(profile, Loader=yaml_loader)
         except yaml.YAMLError as error:

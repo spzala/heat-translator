@@ -1,16 +1,22 @@
-from yaml_parser import Parser
-import os
-from entitytype import EntityType
 from constraints import Constraint
+import logging
+from tosca.log.toscalog import logger
+from entitytype import EntityType
+import os
+from yaml_parser import Parser
 
-schema_file = os.path.dirname(os.path.abspath(__file__)) + os.sep + 'defs' + os.sep + 'properties_schema.yaml'
+schema_file = (os.path.dirname(os.path.abspath(__file__))
+               + os.sep + 'defs' + os.sep + 'properties_schema.yaml')
 properties = Parser(schema_file).load()
+
+logger = logging.getLogger(__name__)
+
 
 class Properties(object):
     '''Tosca built-in properties types'''
     def __init__(self):
         self.defs = properties
-    
+
     def __contains__(self, key):
         return key in self.defs
 
@@ -23,13 +29,14 @@ class Properties(object):
     def __getitem__(self, key):
         '''Get a section.'''
         return self.defs[key]
-    
+
+
 class PropertyDef(EntityType):
     '''Property type '''
-    def __init__(self, name, type, value=None): 
+    def __init__(self, name, type, value=None):
         self.name = name
         self.type = type
-        self.schemata =  Properties()[type]
+        self.schemata = Properties()[type]
         if value:
             self.value = value
 
@@ -45,15 +52,15 @@ class PropertyDef(EntityType):
                 for attr, value in prop_vale.iteritems():
                     schema[attr] = value
         return schema
-    
+
     def get_constraints(self):
         s = self.get_schema(self.name)
         if self.CONSTRAINTS in s:
             return s[self.CONSTRAINTS]
-    
+
     def get_description(self, property_name):
-        return self.get_schema(property_name)[self.DESCRIPTION]   
-                
+        return self.get_schema(property_name)[self.DESCRIPTION]
+
     ''' list all the requirement for a given node type '''
     def required(self):
         required = []
@@ -62,11 +69,13 @@ class PropertyDef(EntityType):
                 if attr == self.REQUIRED and value:
                     required.append(prop_key)
         return required
-    
+
     def validate(self):
-        #self.validate_data_type()  #TODO: can't do data type validation because user input is not provided until runtime
+        #TODO: can't do data type validation because user
+        #input is not provided until runtime
+        #self.validate_data_type()
         self.validate_constraints()
-    
+
     def validate_constraints(self):
         constraints = self.get_constraints()
         if constraints:

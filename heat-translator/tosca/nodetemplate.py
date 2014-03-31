@@ -1,48 +1,45 @@
-from properties import Property
-from properties import Properties
 from tosca.elements.relationshiptype import RelationshipType
 from tosca.inputs import Input
 from tosca.inputs import InputParameters
 from tosca.elements.nodetype import NodeType
 import tosca.elements.relationshiptype
 
+
 class NodeTemplate(NodeType):
     ''' Node template from a Tosca profile.'''
-    
-    '''relationship variable holds relevant relationship type objects '''
-    hostedon = []
-    dependson = []
-    connectsto = []
     def __init__(self, name, nodetemplate):
         super(NodeTemplate, self).__init__(nodetemplate['type'])
         self.name = name
         self.nodetemplate = nodetemplate
-        if 'properties' in self.nodetemplate:
-            self.properties = self.properties()
-            for p in self.properties:
-                pass
-                #print p.name
-        if 'capabilities' in self.nodetemplate:
-            self.capabilities = self.capabilities()
-            for c in self.capabilities:
-                pass
-                #print c.name
-                #print c.type
-                #print self.name
-        if 'interfaces' in self.nodetemplate:
-            self.lifecycle_ops = self.lifecycle_operations()
-            #print self.lifecycle_ops
-            #print self.name
-        
-        if 'requirements' in self.nodetemplate:
-            self.relationship = self.relationship()
-            '''
-            for relationship, node in self.relationship.iteritems():
-               print self.name
-               print relationship
-               print node
-            '''
-    
+        self.properties = self.properties()
+        '''
+        for p in self.properties:
+            if self.name == 'server':
+              print p.name
+        '''
+        self.capabilities = self.capabilities()
+        '''
+        for c in self.capabilities:
+            print c.name
+            print c.type
+            print self.name
+        '''
+        self.lifecycle_ops = self.lifecycle_operations()
+        #print self.lifecycle_ops
+        #print self.name
+        self.relationship = self.relationship()
+
+        '''
+        for relationship, node in self.relationship.iteritems():
+            print self.name
+            print relationship.name()
+            print node.type
+        '''
+
+    @classmethod
+    def ntype(cls, key, type):
+        return NodeType(type)
+
     @classmethod
     def get_relation(cls, key, type):
         relation = None
@@ -59,12 +56,12 @@ class NodeTemplate(NodeType):
                 if relation:
                     break
         return relation
-        
+
     def get_name(self):
         return self.name
-    
+
     def get_value(self):
         return self.nodetemplate
-    
+
     def get_type(self):
         return self.nodetemplate['type']
