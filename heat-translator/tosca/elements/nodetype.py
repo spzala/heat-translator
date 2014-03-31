@@ -1,6 +1,5 @@
 from capabilitytype import Capabilities
-import logging
-from tosca.log.toscalog import *
+from tosca.log.toscalog import logger
 import os
 from properties import PropertyDef
 import relationshiptype
@@ -17,13 +16,11 @@ SECTIONS = (DERIVED_FROM, PROPERTIES, REQUIREMENTS,
            ('derived_from', 'properties', 'requirements', 'interfaces',
             'capabilities')
 
-logger = logging.getLogger(__name__)
-
 
 class NodeTypes(object):
     '''Tosca built-in node types'''
     def __init__(self):
-        logger.info('adsf')
+        logger.info('fdf')
         self.defs = nodetype_def
 
     def __contains__(self, key):

@@ -1,6 +1,4 @@
 from constraints import Constraint
-import logging
-from tosca.log.toscalog import logger
 from entitytype import EntityType
 import os
 from yaml_parser import Parser
@@ -8,8 +6,6 @@ from yaml_parser import Parser
 schema_file = (os.path.dirname(os.path.abspath(__file__))
                + os.sep + 'defs' + os.sep + 'properties_schema.yaml')
 properties = Parser(schema_file).load()
-
-logger = logging.getLogger(__name__)
 
 
 class Properties(object):

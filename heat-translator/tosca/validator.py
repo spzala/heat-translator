@@ -1,5 +1,4 @@
-from tosca.inputs import Input
-##from tosca.elements.nodetemplate import NodeTemplate
+from tosca.log.toscalog import logger
 
 
 class ToscaValidator():
@@ -13,7 +12,7 @@ class ToscaValidator():
         #validate inputs
         for input in self.inputs:
             if not isinstance(input.schema, dict):
-                print ("The input %s has no attributes", name)
+                logger.error("The input %s has no attributes")
             input.validate()
 
         #validate node templates

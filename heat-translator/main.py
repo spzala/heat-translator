@@ -1,13 +1,11 @@
 #!/usr/bin/env python
 
-import logging
 import os
 import sys
-from source import Source
-from translation.translate import TOSCATranslator
-from tosca.log.toscalog import *
-from tosca.tosca_profile import Tosca
-from tosca.validator import ToscaValidator
+#from source import Source
+from tosca.log.toscalog import logger
+#from tosca.tosca_profile import Tosca
+#from tosca.validator import ToscaValidator
 from test_graph import TestGraph
 
 '''Entry point into the heat translation.
@@ -15,15 +13,10 @@ from test_graph import TestGraph
    1. type of translation (e.g. tosca)
    2. Path to the file that needs to be translated.'''
 
-logger = logging.getLogger(__name__)
-
 
 def main():
-    #sourcetype = sys.argv[1]
-    #path = sys.argv[2]
-    sourcetype = 'tosca'
-    path = ('/home/openstack/toscacode/heat-translator/heat-translator/'
-            'tosca/tests/tosca_single_instance_wordpress.yaml')
+    sourcetype = sys.argv[1]
+    path = sys.argv[2]
     if not sourcetype:
         print("Translation type is needed. For example, 'tosca'")
     if not path.endswith(".yaml"):
@@ -34,13 +27,13 @@ def main():
     elif os.path.isfile(path):
         heat_tpl = translate(sourcetype, path)
         if heat_tpl:
-            self.write_output(heat_tpl)
+            write_output(heat_tpl)
     else:
         logger.error('%s is not a valid file.' % path)
 
 
 def translate(sourcetype, path):
-    tpl = Source(path)
+    #tpl = Source(path)
     output = None
     if sourcetype == "tosca":
         #tosca = Tosca(tpl)

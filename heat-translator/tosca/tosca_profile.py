@@ -1,5 +1,4 @@
 from tosca.inputs import Input
-from tosca.elements.graph import ToscaGraph
 from tosca.nodetemplate import NodeTemplate
 
 SECTIONS = (VERSION, DESCRIPTION, INPUTS,
@@ -38,12 +37,6 @@ class Tosca(object):
         for nodetemplate, value in self._get_nodetemplates().iteritems():
             if nodetemplate == name:
                 return value
-
-    def inputs(self):
-        inputs = []
-        for name, attrs in self._get_inputs().iteritems():
-            inputs.append(Input(name, attrs))
-        return inputs
 
     def output(self):
         #TODO

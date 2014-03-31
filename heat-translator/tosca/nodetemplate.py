@@ -1,6 +1,3 @@
-from tosca.elements.relationshiptype import RelationshipType
-from tosca.inputs import Input
-from tosca.inputs import InputParameters
 from tosca.elements.nodetype import NodeType
 import tosca.elements.relationshiptype
 

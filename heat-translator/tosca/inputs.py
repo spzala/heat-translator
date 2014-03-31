@@ -1,5 +1,5 @@
 from tosca.elements.constraints import Constraint
-from tosca.elements.properties import PropertyDef
+from tosca.elements.entitytype import EntityType
 
 
 class InputParameters(object):
@@ -42,15 +42,15 @@ class Input(object):
 
     def has_default(self):
         '''Return whether the input has a default value.'''
-        return Schema.DEFAULT in self.schema
+        return EntityType.DEFAULT in self.schema
 
     def has_description(self):
         '''Return whether the parameter has description.'''
-        return Schema.DESCRIPTION in self.schema
+        return EntityType.DESCRIPTION in self.schema
 
     def has_constraints(self):
         '''Return whether a given input has constraints'''
-        return Schema.CONSTRAINTS in self.schema
+        return EntityType.CONSTRAINTS in self.schema
 
     def validate(self):
         self.validate_type(self.get_type())
@@ -58,7 +58,7 @@ class Input(object):
             self.validate_constraints(self.get_constraints())
 
     def validate_type(self, input_type):
-        if input_type not in Schema.PROPERTIES_TYPES:
+        if input_type not in EntityType.PROPERTIES_TYPES:
             raise ValueError('Invalid type %s' % type)
 
     def validate_constraints(self, constraints):

@@ -1,8 +1,5 @@
 import numbers
-import logging
 from tosca.log.toscalog import logger
-
-logger = logging.getLogger(__name__)
 
 
 class Constraint(object):

@@ -1,7 +1,4 @@
-from tosca.elements.nodetype import *
-from tosca.elements.properties import *
 from tosca.elements.graph import ToscaGraph
-from tosca.nodetemplate import NodeTemplate
 
 
 class TestGraph():

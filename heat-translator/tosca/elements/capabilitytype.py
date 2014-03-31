@@ -1,13 +1,9 @@
-import logging
-from tosca.log.toscalog import logger
 import os
 from yaml_parser import Parser
 
 capability_def_file = (os.path.dirname(os.path.abspath(__file__))
                        + os.sep + 'defs' + os.sep + "capabilitytypedef.yaml")
 capability_def = Parser(capability_def_file).load()
-
-logger = logging.getLogger(__name__)
 
 
 class CapabilityTypeDefs(object):
