@@ -1,4 +1,5 @@
 from capabilitytype import CapabilityTypeDef
+from interfacestype import InterfacesTypeDef
 from tosca.log.toscalog import logger
 import os
 from properties import PropertyDef
@@ -125,15 +126,15 @@ class NodeType(StatefulEntityType):
                     break
         return relation
 
-    def lifecycle_operations(self):
-        return self.interfaces_node_lifecycle_operations
+    def interfaces(self):
+        return self._get_value(INTERFACES)
 
     def lifecycle_inputs(self):
         inputs = []
-        interfaces = self._get_value('interfaces')
+        interfaces = self.interfaces()
         if interfaces:
             for name, value in interfaces.iteritems():
-                if name == 'lifecycle':
+                if name == 'tosca.interfaces.node.Lifecycle':
                     for x, y in value.iteritems():
                         if x == 'inputs':
                             for i in y.iterkeys():
@@ -141,6 +142,17 @@ class NodeType(StatefulEntityType):
         else:
             logger.info('%s does not have life cycle input. ' % self.type)
         return inputs
+
+    def lifecycle_operations(self):
+        '''return available life cycle operations if found, None otherwise.'''
+        ops = None
+        interfaces = self.interfaces()
+        if interfaces:
+            i = InterfacesTypeDef(self.type, 'tosca.interfaces.node.Lifecycle')
+            ops = i.lifecycle_ops()
+        else:
+            logger.info('%s does not have life cycle operation. ' % self.type)
+        return ops
 
     def __set_cap_type(self, value):
         self.type_val = value

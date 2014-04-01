@@ -85,7 +85,7 @@ tosca.nodes.WebApplication.WordPress:
     - host: tosca.nodes.WebServer
     - database_endpoint: tosca.nodes.Database
   interfaces:
-    lifecycle:
+    tosca.interfaces.node.Lifecycle:
       inputs:
         db_host: string
         db_port: integer
