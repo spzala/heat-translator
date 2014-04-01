@@ -103,3 +103,25 @@ tosca.nodes.WebApplication.WordPress:
   db_host:
     required: no
     type: string
+
+tosca.capabilities.Root:
+
+tosca.capabilities.Feature:
+
+tosca.capabilities.Container:
+
+tosca.capabilities.Endpoint:
+  protocol:
+    type: string
+    default: http
+  port:
+    type: integer
+  constraints: 
+    - greater_or_equal: 1
+    - less_or_equal: 65535
+  secure:
+    type: boolean
+    default: false
+
+tosca.capabilities.DatabaseEndpoint:
+  port_name: port

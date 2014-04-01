@@ -5,25 +5,17 @@ tosca.capabilities.Feature:
 
 tosca.capabilities.Container:
   derived_from: tosca.capabilities.Feature
-  properties: 
+  properties:
     containee_types
 
 tosca.capabilities.Endpoint:
   derived_from: tosca.capabilities.Feature
   properties:
-    protocol:
-      type: string
-      default: http
-    port:
-      type: integer
-    constraints: 
-      - greater_or_equal: 1
-      - less_or_equal: 65535
-    secure:
-      type: boolean
-      default: false
+    - protocol
+    - port
+    - secure
 
 tosca.capabilities.DatabaseEndpoint:
   derived_from: tosca.capabilities.Endpoint
   properties:
-    port_name: port
+    - port_name

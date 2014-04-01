@@ -35,6 +35,7 @@ class PropertyDef(EntityType):
         self.schemata = Properties()[type]
         if value:
             self.value = value
+        self.constraints = self.get_constraints()
 
     def is_required(self):
         ''' return true if property is a required for a given node '''
@@ -43,10 +44,11 @@ class PropertyDef(EntityType):
     def get_schema(self, property_name):
         ''' get schema for a given property'''
         schema = {}
-        for prop_key, prop_vale in self.schemata.iteritems():
-            if prop_key == property_name:
-                for attr, value in prop_vale.iteritems():
-                    schema[attr] = value
+        if isinstance(self.schemata, dict):
+            for prop_key, prop_val in self.schemata.iteritems():
+                if prop_key == property_name:
+                    for attr, value in prop_val.iteritems():
+                        schema[attr] = value
         return schema
 
     def get_constraints(self):
@@ -66,6 +68,12 @@ class PropertyDef(EntityType):
                     required.append(prop_key)
         return required
 
+    def set_value(self, value):
+        self.value = value
+
+    def set_contraints(self, constrains):
+        self.constrains = constrains
+
     def validate(self):
         #TODO: can't do data type validation because user
         #input is not provided until runtime
@@ -73,7 +81,7 @@ class PropertyDef(EntityType):
         self.validate_constraints()
 
     def validate_constraints(self):
-        constraints = self.get_constraints()
+        constraints = self.constraints
         if constraints:
             for constraint in constraints:
                 Constraint(self.name, self.value, constraint).validate()

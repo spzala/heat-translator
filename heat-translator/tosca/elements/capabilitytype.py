@@ -1,9 +1,13 @@
 import os
 from yaml_parser import Parser
+from properties import PropertyDef
 
 capability_def_file = (os.path.dirname(os.path.abspath(__file__))
                        + os.sep + 'defs' + os.sep + "capabilitytypedef.yaml")
 capability_def = Parser(capability_def_file).load()
+
+SECTIONS = (DERIVED_FROM, PROPERTIES) = \
+           ('derived_from', 'properties')
 
 
 class CapabilityTypeDefs(object):
@@ -27,22 +31,29 @@ class CapabilityTypeDefs(object):
 
 class CapabilityTypeDef(object):
     '''Tosca built-in capabilities type'''
-    def __init__(self, ctype):
-        self.type = ctype
-        self.defs = CapabilityTypeDefs()[type]
-
-    def properties(self):
-        pass
-
-    def derived_from(self):
-        pass
-    #TODO - add more capabilities methods
-
-
-class Capabilities(object):
-    '''node type capabilites '''
-    def __init__(self, name, ctype, properties=None):
+    def __init__(self, name, ctype, ntype, property_nodetype=None):
         self.name = name
         self.type = ctype
-        if properties:
-            self.properties = properties
+        self.defs = CapabilityTypeDefs()[self.type]
+        self.nodetype = ntype
+        self.property_nodetype = property_nodetype
+
+    def propertiesdef(self):
+        '''returns a list of property objects '''
+        properties = []
+        props = self._get_value(PROPERTIES)
+        if props:
+            for prop in props:
+                properties.append(PropertyDef(prop, self.type))
+        return properties
+
+    def _derivedfrom(self):
+        return self._get_value(DERIVED_FROM)
+
+    def derivedfrom(self):
+        if self._derivedfrom():
+            return CapabilityTypeDef(self._get_value(DERIVED_FROM))
+
+    def _get_value(self, ctype):
+        if ctype in self.defs:
+            return self.defs[ctype]

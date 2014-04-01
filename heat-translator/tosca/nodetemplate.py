@@ -8,30 +8,10 @@ class NodeTemplate(NodeType):
         super(NodeTemplate, self).__init__(nodetemplate['type'])
         self.name = name
         self.nodetemplate = nodetemplate
-        self.properties = self.properties()
-        '''
-        for p in self.properties:
-            if self.name == 'server':
-              print p.name
-        '''
-        self.capabilities = self.capabilities()
-        '''
-        for c in self.capabilities:
-            print c.name
-            print c.type
-            print self.name
-        '''
-        self.lifecycle_ops = self.lifecycle_operations()
-        #print self.lifecycle_ops
-        #print self.name
-        self.relationship = self.relationship()
-
-        '''
-        for relationship, node in self.relationship.iteritems():
-            print self.name
-            print relationship.name()
-            print node.type
-        '''
+        self.type_properties = self.properties()
+        self.type_capabilities = self.capabilities()
+        self.type_lifecycle_ops = self.lifecycle_operations()
+        self.type_relationship = self.relationship()
 
     @classmethod
     def ntype(cls, key, type):

@@ -1,4 +1,4 @@
-from capabilitytype import Capabilities
+from capabilitytype import CapabilityTypeDef
 from tosca.log.toscalog import logger
 import os
 from properties import PropertyDef
@@ -45,8 +45,12 @@ class NodeType(StatefulEntityType):
         self.defs = NodeTypes()[type]
         self.related = {}
 
-    def derivedfrom(self):
+    def _derivedfrom(self):
         return self._get_value(DERIVED_FROM)
+
+    def derivedfrom(self):
+        if self._derivedfrom():
+            return NodeType(self._get_value(DERIVED_FROM))
 
     def properties(self):
         '''returns a list of property objects '''
@@ -62,6 +66,8 @@ class NodeType(StatefulEntityType):
         node type '''
         relationship = {}
         requirs = self.requirements()
+        if requirs is None:
+            requirs = self._get_value(REQUIREMENTS, True)
         if requirs:
             for req in requirs:
                 for x, y in req.iteritems():
@@ -80,6 +86,8 @@ class NodeType(StatefulEntityType):
         capabilities = []
         self.prop_val = None
         caps = self._get_value(CAPABILITIES)
+        if caps is None:
+            caps = self._get_value(CAPABILITIES, True)
         if caps:
             for name, value in caps.iteritems():
                 for x, y in value.iteritems():
@@ -87,7 +95,8 @@ class NodeType(StatefulEntityType):
                         self.__set_cap_type(y)
                     if x == 'properties':
                         self.__set_prop_type(y)
-                cap = Capabilities(name, self.type_val, self.prop_val)
+                cap = CapabilityTypeDef(name, self.type_val,
+                                        self.type, self.prop_val)
                 capabilities.append(cap)
         else:
             logger.info('%s does not provide capabilities. ' % self.type)
@@ -149,19 +158,21 @@ class NodeType(StatefulEntityType):
             if key == type:
                 return value
 
-    def parent_node(self):
-        root = 'tosca.nodes.Root'
-        parent_node = root
-        if self.type != root:
-            parent_node = self.derivedfrom()
-            parent_node = NodeType(parent_node)
-            if parent_node is None:
-                parent_node = NodeType(root)
-            return parent_node
-
-    def _get_value(self, ndtype):
+    def _get_value(self, ndtype, parent=None):
+        value = None
         if ndtype in self.defs:
-            return self.defs[ndtype]
+            value = self.defs[ndtype]
+        if parent and not value:
+            p = self.derivedfrom()
+            while value is None:
+                #check parent node
+                if not p:
+                    break
+                if p and p.type == 'tosca.nodes.Root':
+                    break
+                value = p._get_value(ndtype)
+                p = p.derivedfrom()
+        return value
 
     def add_next(self, nodetpl, relationship):
         self.related[nodetpl] = relationship
