@@ -1,30 +1,5 @@
 from constraints import Constraint
 from entitytype import EntityType
-import os
-from yaml_parser import Parser
-
-schema_file = (os.path.dirname(os.path.abspath(__file__))
-               + os.sep + 'defs' + os.sep + 'properties_schema.yaml')
-properties = Parser(schema_file).load()
-
-
-class Properties(object):
-    '''Tosca built-in properties types'''
-    def __init__(self):
-        self.defs = properties
-
-    def __contains__(self, key):
-        return key in self.defs
-
-    def __iter__(self):
-        return iter(self.defs)
-
-    def __len__(self):
-        return len(self.defs)
-
-    def __getitem__(self, key):
-        '''Get a section.'''
-        return self.defs[key]
 
 
 class PropertyDef(EntityType):
@@ -32,10 +7,19 @@ class PropertyDef(EntityType):
     def __init__(self, name, type, value=None):
         self.name = name
         self.type = type
-        self.schemata = Properties()[type]
+        self.schemata = self._schemata(name)
         if value:
             self.value = value
         self.constraints = self.get_constraints()
+
+    def _schemata(self, name):
+        node = self.TOSCA_DEF[self.type]
+        for key, value in node.iteritems():
+            if key == 'properties':
+                if isinstance(value, dict):
+                    for k, v in value.iteritems():
+                        if k == self.name:
+                            return v
 
     def is_required(self):
         ''' return true if property is a required for a given node '''

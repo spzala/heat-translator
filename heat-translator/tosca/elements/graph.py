@@ -1,17 +1,19 @@
-from nodetype import NodeTypes, NodeType
+from nodetype import NodeType
+from statefulentitytype import StatefulEntityType
 
 
-class ToscaGraph:
+class ToscaGraph(StatefulEntityType):
     '''Graph of Tosca Nodes connected via a specific relationship'''
     def __init__(self):
-        self.nodetypes = self.nodetypes()
+        self.nodetypes = self._nodetypes()
         self.vertices = {}
         self.create()
 
-    def nodetypes(self):
+    def _nodetypes(self):
         nodetypes = []
-        for node in NodeTypes():
-            nodetypes.append(NodeType(node))
+        for node in self.TOSCA_DEF:
+            if 'tosca.nodes' in node:
+                nodetypes.append(NodeType(node))
         return nodetypes
 
     def create_vertex(self, node):

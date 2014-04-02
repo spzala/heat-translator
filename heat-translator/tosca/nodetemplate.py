@@ -1,5 +1,4 @@
 from tosca.elements.nodetype import NodeType
-import tosca.elements.relationshiptype
 
 
 class NodeTemplate(NodeType):
@@ -24,14 +23,14 @@ class NodeTemplate(NodeType):
         cap = ntype.capabilities()
         for c in cap:
             if c.name == key:
-                rtypedef = tosca.elements.relationshiptype.relationship_def
-                for relationship, properties in rtypedef.iteritems():
-                    for x, y in properties.iteritems():
-                        if c.type in y:
-                            relation = relationship
+                for r in cls.RELATIONSHIP_TYPE:
+                    rtypedef = cls.TOSCA_DEF[r]
+                    for relationship, properties in rtypedef.iteritems():
+                        if c.type in properties:
+                            relation = c.type
                             break
-                if relation:
-                    break
+                    if relation:
+                        break
         return relation
 
     def get_name(self):

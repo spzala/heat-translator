@@ -17,7 +17,7 @@ class Tosca(object):
         self.inputs = self.inputs()
         self.nodetemplates = self.nodetemplates()
         self.output = self.output()
-        self.nodetypegraph = self.nodetypegraph()
+        #self.nodetypegraph = self.nodetypegraph()
 
     def inputs(self):
         inputs = []

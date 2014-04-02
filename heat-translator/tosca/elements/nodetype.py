@@ -1,16 +1,10 @@
 from capabilitytype import CapabilityTypeDef
 from interfacestype import InterfacesTypeDef
 from tosca.log.toscalog import logger
-import os
 from properties import PropertyDef
-import relationshiptype
 from relationshiptype import RelationshipType
 from statefulentitytype import StatefulEntityType
-from yaml_parser import Parser
 
-nodetype_def_file = (os.path.dirname(os.path.abspath(__file__))
-                     + os.sep + 'defs' + os.sep + "nodetypesdef.yaml")
-nodetype_def = Parser(nodetype_def_file).load()
 
 SECTIONS = (DERIVED_FROM, PROPERTIES, REQUIREMENTS,
             INTERFACES, CAPABILITIES) = \
@@ -18,31 +12,12 @@ SECTIONS = (DERIVED_FROM, PROPERTIES, REQUIREMENTS,
             'capabilities')
 
 
-class NodeTypes(object):
-    '''Tosca built-in node types'''
-    def __init__(self):
-        self.defs = nodetype_def
-
-    def __contains__(self, key):
-        return key in self.defs
-
-    def __iter__(self):
-        return iter(self.defs)
-
-    def __len__(self):
-        return len(self.defs)
-
-    def __getitem__(self, key):
-        '''Get a section.'''
-        return self.defs[key]
-
-
 class NodeType(StatefulEntityType):
     '''Tosca built-in node type'''
     def __init__(self, type):
         super(NodeType, self).__init__()
+        self.defs = self.TOSCA_DEF[type]
         self.type = type
-        self.defs = NodeTypes()[type]
         self.related = {}
 
     def _derivedfrom(self):
@@ -75,6 +50,12 @@ class NodeType(StatefulEntityType):
                     rtype = RelationshipType(relation)
                     relatednode = self.ntype(x, y)
                     relationship[rtype] = relatednode
+        '''for i, j in relationship.iteritems():
+            import pdb
+            pdb.set_trace()
+            print self.type
+            print i.type
+            print j.type'''
         return relationship
 
     @classmethod
@@ -115,14 +96,14 @@ class NodeType(StatefulEntityType):
         cap = ntype.capabilities()
         for c in cap:
             if c.name == key:
-                rtypedef = relationshiptype.relationship_def
-                for relationship, properties in rtypedef.iteritems():
-                    for y in properties.itervalues():
-                        if c.type in y:
-                            relation = relationship
+                for r in cls.RELATIONSHIP_TYPE:
+                    rtypedef = ntype.TOSCA_DEF[r]
+                    for relationship, properties in rtypedef.iteritems():
+                        if c.type in properties:
+                            relation = r
                             break
-                if relation:
-                    break
+                    if relation:
+                        break
         return relation
 
     def interfaces(self):
