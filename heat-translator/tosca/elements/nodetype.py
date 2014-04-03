@@ -49,12 +49,6 @@ class NodeType(StatefulEntityType):
                     rtype = RelationshipType(relation)
                     relatednode = self.ntype(x, y)
                     relationship[rtype] = relatednode
-        '''for i, j in relationship.iteritems():
-            import pdb
-            pdb.set_trace()
-            print self.type
-            print i.type
-            print j.type'''
         return relationship
 
     @classmethod
