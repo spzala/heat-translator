@@ -3,7 +3,6 @@
 import os
 import sys
 #from source import Source
-from tosca.log.toscalog import logger
 #from tosca.tosca_profile import Tosca
 #from tosca.validator import ToscaValidator
 from test_graph import TestGraph
@@ -22,14 +21,14 @@ def main():
     if not path.endswith(".yaml"):
         print "Only YAML file is supported at this time."
     if os.path.isdir(path):
-        logger.error('Translation of directory is not supported'
-                     'at this time : %s' % path)
+        print('Translation of directory is not supported'
+              'at this time : %s' % path)
     elif os.path.isfile(path):
         heat_tpl = translate(sourcetype, path)
         if heat_tpl:
             write_output(heat_tpl)
     else:
-        logger.error('%s is not a valid file.' % path)
+        print('%s is not a valid file.' % path)
 
 
 def translate(sourcetype, path):

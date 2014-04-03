@@ -1,5 +1,4 @@
 import numbers
-from tosca.log.toscalog import logger
 
 
 class Constraint(object):
@@ -25,8 +24,8 @@ class Constraint(object):
 
     def validate_greater_than(self, value):
         if self.value < value:
-            logger.error("%s value requires to be greater than %s"
-                         % (self.propertyname, value))
+            print("%s value requires to be greater than %s"
+                  % (self.propertyname, value))
 
     def validate_greater_or_equal(self):
         pass

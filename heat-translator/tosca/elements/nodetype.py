@@ -1,6 +1,5 @@
 from capabilitytype import CapabilityTypeDef
 from interfacestype import InterfacesTypeDef
-from tosca.log.toscalog import logger
 from properties import PropertyDef
 from relationshiptype import RelationshipType
 from statefulentitytype import StatefulEntityType
@@ -80,7 +79,7 @@ class NodeType(StatefulEntityType):
                                         self.type, self.prop_val)
                 capabilities.append(cap)
         else:
-            logger.info('%s does not provide capabilities. ' % self.type)
+            print('%s does not provide capabilities. ' % self.type)
         return capabilities
 
     def requirements(self):
@@ -120,7 +119,7 @@ class NodeType(StatefulEntityType):
                             for i in y.iterkeys():
                                 inputs.append(i)
         else:
-            logger.info('%s does not have life cycle input. ' % self.type)
+            print('%s does not have life cycle input. ' % self.type)
         return inputs
 
     def lifecycle_operations(self):
@@ -131,7 +130,7 @@ class NodeType(StatefulEntityType):
             i = InterfacesTypeDef(self.type, 'tosca.interfaces.node.Lifecycle')
             ops = i.lifecycle_ops()
         else:
-            logger.info('%s does not have life cycle operation. ' % self.type)
+            print('%s does not have life cycle operation. ' % self.type)
         return ops
 
     def __set_cap_type(self, value):
