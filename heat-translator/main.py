@@ -2,10 +2,9 @@
 
 import os
 import sys
-#from source import Source
-#from tosca.tosca_profile import Tosca
+from tosca.tosca_tpl import ToscaTpl
 #from tosca.validator import ToscaValidator
-from test_graph import TestGraph
+from test_tpl_graph import TestTPLGraph
 
 '''Entry point into the heat translation.
    Takes two user arguments,
@@ -32,12 +31,10 @@ def main():
 
 
 def translate(sourcetype, path):
-    #tpl = Source(path)
     output = None
     if sourcetype == "tosca":
-        #tosca = Tosca(tpl)
-        TestGraph().test()
-        pass
+        tosca = ToscaTpl(path)
+        TestTPLGraph(tosca).test()
     return output
 
 

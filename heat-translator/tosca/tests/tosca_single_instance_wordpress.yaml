@@ -31,8 +31,6 @@ node_templates:
     requirements:
       - host: webserver
       - database_endpoint: mysql_database
-      - database: my_database 
-        relationship_type: tosca.relationships.DependsOn
     interfaces:
       create: wordpress_install.sh
       configure: 

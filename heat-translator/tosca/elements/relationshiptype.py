@@ -6,10 +6,11 @@ SECTIONS = (DERIVED_FROM, VALIDTARGETS) = \
 
 class RelationshipType(StatefulEntityType):
     '''Tosca built-in relationship type'''
-    def __init__(self, type):
+    def __init__(self, type, keyword=None):
         super(RelationshipType, self).__init__()
         self.defs = self.TOSCA_DEF[type]
         self.type = type
+        self.keyword = keyword
 
     def name(self):
         return self.type

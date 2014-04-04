@@ -37,23 +37,36 @@ class NodeType(StatefulEntityType):
 
     def relationship(self):
         '''returns a dictionary containing relationship to a particular
-        node type '''
+         node type '''
         relationship = {}
         requirs = self.requirements()
         if requirs is None:
-            requirs = self._get_value(REQUIREMENTS, True)
+            requirs = self._get_value(REQUIREMENTS, None, True)
         if requirs:
             for req in requirs:
                 for x, y in req.iteritems():
                     relation = self.get_relation(x, y)
-                    rtype = RelationshipType(relation)
-                    relatednode = self.ntype(x, y)
+                    rtype = RelationshipType(relation, x)
+                    #relatednode = self.ntype(x, y)
+                    relatednode = NodeType(y)
                     relationship[rtype] = relatednode
         return relationship
 
-    @classmethod
-    def ntype(cls, key, ndtype):
-        return cls(ndtype)
+    def get_relation(self, key, ndtype):
+        relation = None
+        ntype = NodeType(ndtype)
+        cap = ntype.capabilities()
+        for c in cap:
+            if c.name == key:
+                for r in self.RELATIONSHIP_TYPE:
+                    rtypedef = ntype.TOSCA_DEF[r]
+                    for relationship, properties in rtypedef.iteritems():
+                        if c.type in properties:
+                            relation = r
+                            break
+                    if relation:
+                        break
+        return relation
 
     def capabilities(self):
         '''returns a list of capability objects '''
@@ -61,7 +74,7 @@ class NodeType(StatefulEntityType):
         self.prop_val = None
         caps = self._get_value(CAPABILITIES)
         if caps is None:
-            caps = self._get_value(CAPABILITIES, True)
+            caps = self._get_value(CAPABILITIES, None, True)
         if caps:
             for name, value in caps.iteritems():
                 for x, y in value.iteritems():
@@ -72,8 +85,6 @@ class NodeType(StatefulEntityType):
                 cap = CapabilityTypeDef(name, self.type_val,
                                         self.type, self.prop_val)
                 capabilities.append(cap)
-        else:
-            print('%s does not provide capabilities. ' % self.type)
         return capabilities
 
     def requirements(self):
@@ -81,23 +92,6 @@ class NodeType(StatefulEntityType):
 
     def has_relationship(self):
         return self.relationship()
-
-    @classmethod
-    def get_relation(cls, key, ndtype):
-        relation = None
-        ntype = cls(ndtype)
-        cap = ntype.capabilities()
-        for c in cap:
-            if c.name == key:
-                for r in cls.RELATIONSHIP_TYPE:
-                    rtypedef = ntype.TOSCA_DEF[r]
-                    for relationship, properties in rtypedef.iteritems():
-                        if c.type in properties:
-                            relation = r
-                            break
-                    if relation:
-                        break
-        return relation
 
     def interfaces(self):
         return self._get_value(INTERFACES)
@@ -112,8 +106,6 @@ class NodeType(StatefulEntityType):
                         if x == 'inputs':
                             for i in y.iterkeys():
                                 inputs.append(i)
-        else:
-            print('%s does not have life cycle input. ' % self.type)
         return inputs
 
     def lifecycle_operations(self):
@@ -123,8 +115,6 @@ class NodeType(StatefulEntityType):
         if interfaces:
             i = InterfacesTypeDef(self.type, 'tosca.interfaces.node.Lifecycle')
             ops = i.lifecycle_ops()
-        else:
-            print('%s does not have life cycle operation. ' % self.type)
         return ops
 
     def __set_cap_type(self, value):
@@ -143,10 +133,12 @@ class NodeType(StatefulEntityType):
             if key == type:
                 return value
 
-    def _get_value(self, ndtype, parent=None):
+    def _get_value(self, ndtype, defs=None, parent=None):
         value = None
-        if ndtype in self.defs:
-            value = self.defs[ndtype]
+        if defs is None:
+            defs = self.defs
+        if ndtype in defs:
+            value = defs[ndtype]
         if parent and not value:
             p = self.derivedfrom()
             while value is None:

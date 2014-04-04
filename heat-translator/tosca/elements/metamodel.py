@@ -2,7 +2,7 @@ from nodetype import NodeType
 from statefulentitytype import StatefulEntityType
 
 
-class ToscaGraph(StatefulEntityType):
+class ToscaMetaModelGraph(StatefulEntityType):
     '''Graph of Tosca Nodes connected via a specific relationship'''
     def __init__(self):
         self.nodetypes = self._nodetypes()
