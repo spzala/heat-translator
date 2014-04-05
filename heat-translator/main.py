@@ -1,5 +1,5 @@
 #!/usr/bin/env python
-
+import logging
 import os
 import sys
 from tosca.tosca_tpl import ToscaTpl
@@ -10,6 +10,8 @@ from test_tpl_graph import TestTPLGraph
    Takes two user arguments,
    1. type of translation (e.g. tosca)
    2. Path to the file that needs to be translated.'''
+
+log = logging.getLogger("heat-translator.log")
 
 
 def main():

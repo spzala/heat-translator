@@ -1,5 +1,8 @@
+import logging
 from tosca.elements.constraints import Constraint
 from tosca.elements.entitytype import EntityType
+
+log = logging.getLogger("tosca.log")
 
 
 class Input(object):

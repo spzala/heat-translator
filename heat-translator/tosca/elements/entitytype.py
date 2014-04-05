@@ -1,5 +1,8 @@
 import os
+import logging
 import tosca.utils.yamlparser
+
+log = logging.getLogger("tosca.log")
 
 
 class EntityType(object):

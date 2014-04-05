@@ -1,10 +1,14 @@
+import logging
 from tosca.elements.nodetype import NodeType
 from tosca.elements.capabilitytype import CapabilityTypeDef
+from tosca.elements.interfacestype import InterfacesTypeDef
 
 SECTIONS = (DERIVED_FROM, PROPERTIES, REQUIREMENTS,
             INTERFACES, CAPABILITIES) = \
            ('derived_from', 'properties', 'requirements', 'interfaces',
             'capabilities')
+
+log = logging.getLogger("tosca.log")
 
 
 class NodeTemplate(NodeType):
@@ -20,6 +24,7 @@ class NodeTemplate(NodeType):
         self.type_lifecycle_ops = self.lifecycle_operations
         self.type_relationship = self.relationship
         self.related = {}
+        self.tpl_interfaces
 
     @property
     def value(self):
@@ -59,6 +64,19 @@ class NodeTemplate(NodeType):
                                         self.name, prop_name, prop_val)
                 tpl_cap.append(cap)
         return tpl_cap
+
+    @property
+    def tpl_interfaces(self):
+        tpl_ifaces = []
+        ifaces = self._get_value(INTERFACES, self.nodetemplate)
+        if ifaces:
+            for i in ifaces:
+                for name, value in ifaces.iteritems():
+                    for ops, val in value.iteritems():
+                        iface = InterfacesTypeDef(None, name, self.name,
+                                                  ops, val)
+                        tpl_ifaces.append(iface)
+        return tpl_ifaces
 
     def _add_next(self, nodetpl, relationship):
         self.related[nodetpl] = relationship

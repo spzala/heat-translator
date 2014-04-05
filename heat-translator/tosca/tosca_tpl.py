@@ -1,13 +1,15 @@
+import logging
 import tosca.utils.yamlparser
-from tosca.inputs import Input
 from tosca.nodetemplate import NodeTemplate
-from tosca.inputs import Output
+from tosca.parameters import Input, Output
 from tosca.elements.tpl_relationship_graph import ToscaGraph
 
 SECTIONS = (VERSION, DESCRIPTION, INPUTS,
             NODE_TEMPLATES, OUTPUTS) = \
            ('tosca_definitions_version', 'description', 'inputs',
             'node_templates', 'outputs')
+
+log = logging.getLogger("tosca.model")
 
 
 class ToscaTpl(object):
