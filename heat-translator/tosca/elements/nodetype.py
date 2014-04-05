@@ -22,10 +22,12 @@ class NodeType(StatefulEntityType):
     def _derivedfrom(self):
         return self._get_value(DERIVED_FROM)
 
-    def derivedfrom(self):
+    @property
+    def parentnode(self):
         if self._derivedfrom():
             return NodeType(self._get_value(DERIVED_FROM))
 
+    @property
     def properties(self):
         '''returns a list of property objects '''
         properties = []
@@ -35,6 +37,7 @@ class NodeType(StatefulEntityType):
                 properties.append(PropertyDef(prop, self.type))
         return properties
 
+    @property
     def relationship(self):
         '''returns a dictionary containing relationship to a particular
          node type '''
@@ -55,7 +58,7 @@ class NodeType(StatefulEntityType):
     def get_relation(self, key, ndtype):
         relation = None
         ntype = NodeType(ndtype)
-        cap = ntype.capabilities()
+        cap = ntype.capabilities
         for c in cap:
             if c.name == key:
                 for r in self.RELATIONSHIP_TYPE:
@@ -68,10 +71,14 @@ class NodeType(StatefulEntityType):
                         break
         return relation
 
+    @property
     def capabilities(self):
         '''returns a list of capability objects '''
-        capabilities = []
-        self.prop_val = None
+        typecapabilities = []
+        prop_name = None
+        prop_val = None
+        self.cap_prop = None
+        self.cap_type = None
         caps = self._get_value(CAPABILITIES)
         if caps is None:
             caps = self._get_value(CAPABILITIES, None, True)
@@ -81,11 +88,15 @@ class NodeType(StatefulEntityType):
                     if x == 'type':
                         self.__set_cap_type(y)
                     if x == 'properties':
-                        self.__set_prop_type(y)
-                cap = CapabilityTypeDef(name, self.type_val,
-                                        self.type, self.prop_val)
-                capabilities.append(cap)
-        return capabilities
+                        self.__set_cap_prop(y)
+                if self.cap_prop:
+                    for prop, value in self.cap_prop.iteritems():
+                        prop_name = prop
+                        prop_val = value
+                cap = CapabilityTypeDef(name, self.cap_type,
+                                        self.type, prop_name, prop_val)
+                typecapabilities.append(cap)
+        return typecapabilities
 
     def requirements(self):
         return self._get_value(REQUIREMENTS)
@@ -96,6 +107,7 @@ class NodeType(StatefulEntityType):
     def interfaces(self):
         return self._get_value(INTERFACES)
 
+    @property
     def lifecycle_inputs(self):
         inputs = []
         interfaces = self.interfaces()
@@ -108,6 +120,7 @@ class NodeType(StatefulEntityType):
                                 inputs.append(i)
         return inputs
 
+    @property
     def lifecycle_operations(self):
         '''return available life cycle operations if found, None otherwise.'''
         ops = None
@@ -118,13 +131,13 @@ class NodeType(StatefulEntityType):
         return ops
 
     def __set_cap_type(self, value):
-        self.type_val = value
+        self.cap_type = value
 
-    def __set_prop_type(self, value):
-        self.prop_val = value
+    def __set_cap_prop(self, value):
+        self.cap_prop = value
 
     def get_capability(self, name):
-        for key, value in self.capabilities():
+        for key, value in self.capabilities:
             if key == name:
                 return value
 
@@ -140,7 +153,7 @@ class NodeType(StatefulEntityType):
         if ndtype in defs:
             value = defs[ndtype]
         if parent and not value:
-            p = self.derivedfrom()
+            p = self.parentnode
             while value is None:
                 #check parent node
                 if not p:
@@ -148,7 +161,7 @@ class NodeType(StatefulEntityType):
                 if p and p.type == 'tosca.nodes.Root':
                     break
                 value = p._get_value(ndtype)
-                p = p.derivedfrom()
+                p = p.parentnode
         return value
 
     def add_next(self, nodetpl, relationship):

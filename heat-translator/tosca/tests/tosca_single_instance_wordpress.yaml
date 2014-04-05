@@ -48,7 +48,7 @@ node_templates:
       db_user: { get_input: db_user }
       db_password: { get_input: db_pwd }
     capabilities:
-      DatabaseEndpoint:
+      tosca.capabilities.DatabaseEndpoint:
         properties:
           port: { get_input: db_port }
     requirements:

@@ -8,12 +8,13 @@ SECTIONS = (DERIVED_FROM, PROPERTIES) = \
 
 class CapabilityTypeDef(EntityType):
     '''Tosca built-in capabilities type'''
-    def __init__(self, name, ctype, ntype, property_nodetype=None):
+    def __init__(self, name, ctype, ntype, property=None, prop_value=None):
         self.defs = self.TOSCA_DEF[ctype]
         self.name = name
         self.type = ctype
         self.nodetype = ntype
-        self.property_nodetype = property_nodetype
+        self.property = property
+        self.property_value = prop_value
 
     def propertiesdef(self):
         '''returns a list of property objects '''

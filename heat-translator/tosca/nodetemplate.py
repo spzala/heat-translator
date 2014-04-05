@@ -1,4 +1,5 @@
 from tosca.elements.nodetype import NodeType
+from tosca.elements.capabilitytype import CapabilityTypeDef
 
 SECTIONS = (DERIVED_FROM, PROPERTIES, REQUIREMENTS,
             INTERFACES, CAPABILITIES) = \
@@ -14,10 +15,10 @@ class NodeTemplate(NodeType):
         self.nodetemplates = nodetemplates
         self.nodetemplate = nodetemplates[self.name]
         self.type = self.nodetemplate['type']
-        self.type_properties = self.properties()
-        self.type_capabilities = self.capabilities()
-        self.type_lifecycle_ops = self.lifecycle_operations()
-        self.type_relationship = self.relationship()
+        self.type_properties = self.properties
+        self.type_capabilities = self.capabilities
+        self.type_lifecycle_ops = self.lifecycle_operations
+        self.type_relationship = self.relationship
         self.related = {}
 
     @property
@@ -40,6 +41,24 @@ class NodeTemplate(NodeType):
                             rtpl = NodeTemplate(y, self.nodetemplates)
                             tpl_relation[i] = rtpl
         return tpl_relation
+
+    @property
+    def tpl_capabilities(self):
+        '''returns a list of capability objects '''
+        tpl_cap = []
+        prop_name = None
+        prop_val = None
+        caps = self._get_value(CAPABILITIES, self.nodetemplate)
+        if caps:
+            for name, value in caps.iteritems():
+                for prop, val in value.iteritems():
+                    for p, v in val.iteritems():
+                        prop_name = p
+                        prop_val = v
+                cap = CapabilityTypeDef(name, name,
+                                        self.name, prop_name, prop_val)
+                tpl_cap.append(cap)
+        return tpl_cap
 
     def _add_next(self, nodetpl, relationship):
         self.related[nodetpl] = relationship
