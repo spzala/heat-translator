@@ -2,60 +2,34 @@ from tosca.elements.constraints import Constraint
 from tosca.elements.entitytype import EntityType
 
 
-class InputParameters(object):
-    def __init__(self, inputs):
-        self.inputs = inputs
-
-    def __contains__(self, key):
-        return key in self.inputs
-
-    def __iter__(self):
-        return iter(self.inputs)
-
-    def __len__(self):
-        return len(self.inputs)
-
-    def __getitem__(self, key):
-        '''Get a input value.'''
-        return self.inputs[key]
-
-
 class Input(object):
     def __init__(self, name, schema):
         self.name = name
         self.schema = schema
 
-    def get_type(self):
+    @property
+    def type(self):
         return self.schema['type']
 
-    def get_description(self):
-        if self.has_default():
+    @property
+    def description(self):
+        if EntityType.DESCRIPTION in self.schema:
             return self.schema['description']
 
-    def get_default(self):
-        if self.has_default():
+    @property
+    def default(self):
+        if self.EntityType.DEFAULT in self.schema:
             return self.schema['default']
 
-    def get_constraints(self):
-        if self.has_constraints():
+    @property
+    def constraints(self):
+        if EntityType.CONSTRAINTS in self.schema:
             return self.schema['constraints']
-
-    def has_default(self):
-        '''Return whether the input has a default value.'''
-        return EntityType.DEFAULT in self.schema
-
-    def has_description(self):
-        '''Return whether the parameter has description.'''
-        return EntityType.DESCRIPTION in self.schema
-
-    def has_constraints(self):
-        '''Return whether a given input has constraints'''
-        return EntityType.CONSTRAINTS in self.schema
 
     def validate(self):
         self.validate_type(self.get_type())
-        if self.has_constraints():
-            self.validate_constraints(self.get_constraints())
+        if self.constraints():
+            self.validate_constraints(self.constraints)
 
     def validate_type(self, input_type):
         if input_type not in EntityType.PROPERTIES_TYPES:
@@ -69,3 +43,17 @@ class Input(object):
                 if isinstance(key, dict):
                     #TODO
                     pass
+
+
+class Output(object):
+    def __init__(self, name, attrs):
+        self.name = name
+        self.attrs = attrs
+
+    @property
+    def description(self):
+        return self.attrs['description']
+
+    @property
+    def value(self):
+        return self.attrs['value']

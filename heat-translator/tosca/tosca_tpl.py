@@ -1,6 +1,7 @@
 import tosca.utils.yamlparser
 from tosca.inputs import Input
 from tosca.nodetemplate import NodeTemplate
+from tosca.inputs import Output
 from tosca.elements.tpl_relationship_graph import ToscaGraph
 
 SECTIONS = (VERSION, DESCRIPTION, INPUTS,
@@ -15,49 +16,44 @@ class ToscaTpl(object):
     '''
     def __init__(self, path):
         self.tpl = tosca.utils.yamlparser.load_yaml(path)
-        self.version = self._version
-        self.description = self._description
+        self.version = self._tpl_version()
+        self.description = self._tpl_description()
         self.inputs = self._inputs()
         self.nodetemplates = self._nodetemplates()
-        self.outputs = self._output()
+        self.outputs = self._outputs()
         self.graph = ToscaGraph(self.nodetemplates)
 
     def _inputs(self):
         inputs = []
-        for name, attrs in self.tosca_inputs.iteritems():
+        for name, attrs in self._tpl_inputs().iteritems():
             inputs.append(Input(name, attrs))
         return inputs
 
     def _nodetemplates(self):
         '''node templates objects. '''
         nodetemplates = []
-        tpls = self.tosca_nodetemplates
+        tpls = self._tpl_nodetemplates()
         for name, value in tpls.iteritems():
             nodetemplates.append(NodeTemplate(name, tpls))
         return nodetemplates
 
-    def _output(self):
-        #TODO
-        pass
+    def _outputs(self):
+        outputs = []
+        for name, attrs in self._tpl_outputs().iteritems():
+            outputs.append(Output(name, attrs))
+        return outputs
 
-    def _version(self):
+    def _tpl_version(self):
         return self.tpl[VERSION]
 
-    def _description(self):
+    def _tpl_description(self):
         return self.tpl[DESCRIPTION]
 
-    @property
-    def tosca_inputs(self):
+    def _tpl_inputs(self):
         return self.tpl[INPUTS]
 
-    @property
-    def tosca_nodetemplates(self):
+    def _tpl_nodetemplates(self):
         return self.tpl[NODE_TEMPLATES]
 
-    @property
-    def tosca_outputs(self):
+    def _tpl_outputs(self):
         return self.tpl[OUTPUTS]
-
-    @property
-    def nodetemplate(self, tplname):
-        return self.nodetemplates[tplname]
