@@ -42,20 +42,20 @@ class NodeType(StatefulEntityType):
         '''returns a dictionary containing relationship to a particular
          node type '''
         relationship = {}
-        requirs = self.requirements()
+        requirs = self.requirements
         if requirs is None:
             requirs = self._get_value(REQUIREMENTS, None, True)
         if requirs:
             for req in requirs:
                 for x, y in req.iteritems():
-                    relation = self.get_relation(x, y)
+                    relation = self._get_relation(x, y)
                     rtype = RelationshipType(relation, x)
                     #relatednode = self.ntype(x, y)
                     relatednode = NodeType(y)
                     relationship[rtype] = relatednode
         return relationship
 
-    def get_relation(self, key, ndtype):
+    def _get_relation(self, key, ndtype):
         relation = None
         ntype = NodeType(ndtype)
         cap = ntype.capabilities
@@ -98,11 +98,9 @@ class NodeType(StatefulEntityType):
                 typecapabilities.append(cap)
         return typecapabilities
 
+    @property
     def requirements(self):
         return self._get_value(REQUIREMENTS)
-
-    def has_relationship(self):
-        return self.relationship()
 
     def interfaces(self):
         return self._get_value(INTERFACES)
@@ -127,7 +125,7 @@ class NodeType(StatefulEntityType):
         interfaces = self.interfaces()
         if interfaces:
             i = InterfacesTypeDef(self.type, 'tosca.interfaces.node.Lifecycle')
-            ops = i.lifecycle_ops()
+            ops = i.lifecycle_ops
         return ops
 
     def __set_cap_type(self, value):
@@ -136,13 +134,13 @@ class NodeType(StatefulEntityType):
     def __set_cap_prop(self, value):
         self.cap_prop = value
 
-    def get_capability(self, name):
+    def capability(self, name):
         for key, value in self.capabilities:
             if key == name:
                 return value
 
-    def get_capability_type(self, name):
-        for key, value in self.get_capability(name):
+    def capability_type(self, name):
+        for key, value in self.capability(name):
             if key == type:
                 return value
 
@@ -164,15 +162,13 @@ class NodeType(StatefulEntityType):
                 p = p.parentnode
         return value
 
-    def add_next(self, nodetpl, relationship):
+    def _add_next(self, nodetpl, relationship):
         self.related[nodetpl] = relationship
 
-    def get_relatednodes(self):
+    @property
+    def relatednodes(self):
         return self.related.keys()
 
-    def get_type(self):
-        return self.type
-
-    def get_relationship(self, nodetpl):
-        if nodetpl in self.related:
-            return self.related[nodetpl]
+    def relation(self, ntype):
+        if ntype in self.related:
+            return self.related[ntype]

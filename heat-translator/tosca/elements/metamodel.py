@@ -7,7 +7,7 @@ class ToscaMetaModelGraph(StatefulEntityType):
     def __init__(self):
         self.nodetypes = self._nodetypes()
         self.vertices = {}
-        self.create()
+        self._create()
 
     def _nodetypes(self):
         nodetypes = []
@@ -16,33 +16,34 @@ class ToscaMetaModelGraph(StatefulEntityType):
                 nodetypes.append(NodeType(node))
         return nodetypes
 
-    def create_vertex(self, node):
+    def _create_vertex(self, node):
         self.vertices[node.type] = node
 
     def create_edge(self, node1, node2, relationship):
         if node1 not in self.vertices:
-            self.create_vertex(node1)
+            self._create_vertex(node1)
         if node2 not in self.vertices:
-            self.create_vertex(node2)
+            self._create_vertex(node2)
         self.vertices[node1.type].add_next(self.vertices[node2.type],
                                            relationship)
 
-    def get_vertices(self):
+    @property
+    def verticeskeys(self):
         return self.vertices.keys()
 
-    def get_vertex(self, node):
+    def vertex(self, node):
         if node in self.vertices:
             return self.vertices[node]
 
     def __iter__(self):
         return iter(self.vertices.values())
 
-    def create(self):
+    def _create(self):
         for node in self.nodetypes:
-            if node.has_relationship():
+            if node.relationship:
                 relation = node.relationship()
                 for relation, nodetype in relation.iteritems():
                     for tpl in self.nodetypes:
                         if tpl.type == nodetype.type:
                             self.create_edge(node, nodetype, relation)
-            self.create_vertex(node)
+            self._create_vertex(node)

@@ -12,12 +12,15 @@ class RelationshipType(StatefulEntityType):
         self.type = type
         self.keyword = keyword
 
+    @property
     def name(self):
         return self.type
 
+    @property
     def derivedfrom(self):
         return self._get_value(DERIVED_FROM)
 
+    @property
     def valid_targets(self):
         return self._get_value(VALIDTARGETS)
 

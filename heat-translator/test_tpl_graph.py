@@ -14,4 +14,4 @@ class TestTPLGraph():
             for relatednode in node.relatednodes:
                 print("( %s , %s )" % (node.name,
                                        relatednode.name))
-                print node.relation(relatednode).type
+                print node.tpl_relation(relatednode).type

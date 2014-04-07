@@ -28,6 +28,7 @@ class InterfacesTypeDef(StatefulEntityType):
             else:
                 self.implementation = value
 
+    @property
     def lifecycle_ops(self):
         if self.defs:
             if self.type == LIFECYCLE:
@@ -36,6 +37,7 @@ class InterfacesTypeDef(StatefulEntityType):
                     ops.append(name)
                 return ops
 
+    @property
     def configure_ops(self):
         if self.defs:
             if self.type == CONFIGURE:

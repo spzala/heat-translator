@@ -2,10 +2,11 @@ import os
 import logging
 import tosca.utils.yamlparser
 
-log = logging.getLogger("tosca.log")
+log = logging.getLogger('tosca')
 
 
 class EntityType(object):
+
     '''TOSCA definition file. '''
     TOSCA_DEF_FILE = os.path.join(
         os.path.dirname(os.path.abspath(__file__)),
