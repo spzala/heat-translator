@@ -28,7 +28,11 @@ class ToscaTpl(object):
     def _inputs(self):
         inputs = []
         for name, attrs in self._tpl_inputs().iteritems():
-            inputs.append(Input(name, attrs))
+            input = Input(name, attrs)
+            if not isinstance(input.schema, dict):
+                print("The input %s has no attributes")
+            input.validate()
+            inputs.append(input)
         return inputs
 
     def _nodetemplates(self):

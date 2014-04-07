@@ -30,8 +30,8 @@ class Input(object):
             return self.schema['constraints']
 
     def validate(self):
-        self.validate_type(self.get_type())
-        if self.constraints():
+        self.validate_type(self.type)
+        if self.constraints:
             self.validate_constraints(self.constraints)
 
     def validate_type(self, input_type):
