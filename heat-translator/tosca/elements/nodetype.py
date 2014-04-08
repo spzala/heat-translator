@@ -15,6 +15,9 @@ class NodeType(StatefulEntityType):
     '''Tosca built-in node type'''
     def __init__(self, type):
         super(NodeType, self).__init__()
+        if type not in self.TOSCA_DEF.keys():
+            raise ValueError("Node type %(ntype)s is not a valid TOSCA type."
+                             % {'ntype': type})
         self.defs = self.TOSCA_DEF[type]
         self.type = type
         self.related = {}

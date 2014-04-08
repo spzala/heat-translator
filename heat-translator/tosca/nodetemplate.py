@@ -86,10 +86,28 @@ class NodeTemplate(NodeType):
     def tpl_properties(self):
         tpl_props = []
         properties = self._get_value(PROPERTIES, self.nodetemplate)
+        requiredprop = []
+        for p in self.type_properties:
+            if p.required:
+                requiredprop.append(p.name)
         if properties:
+            #make sure it's not missing any property required by a node type
+            missingprop = []
+            for r in requiredprop:
+                if r not in properties.keys():
+                    missingprop.append(r)
+            if missingprop:
+                raise ValueError(("Node template %(tpl)s is missing "
+                                  "one or more required properties %(prop)s")
+                                 % {'tpl': self.name, 'prop': missingprop})
             for name, value in properties.iteritems():
-                prop = PropertyDef(name, None, self.name, value)
+                prop = PropertyDef(name, self.type, value, self.name)
                 tpl_props.append(prop)
+        else:
+            if requiredprop:
+                raise ValueError(("Node template %(tpl)s is missing"
+                                  "one or more required properties %(prop)s")
+                                 % {'tpl': self.name, 'prop': requiredprop})
         return tpl_props
 
     def _add_next(self, nodetpl, relationship):
@@ -119,3 +137,7 @@ class NodeTemplate(NodeType):
                     if c.name == cap_name:
                         if c.property == property:
                             return c.property_value
+
+    def validate(self):
+        for prop in self.tpl_properties:
+            prop.validate()

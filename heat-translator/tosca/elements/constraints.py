@@ -24,8 +24,9 @@ class Constraint(object):
 
     def validate_greater_than(self, value):
         if self.value < value:
-            print("%s value requires to be greater than %s"
-                  % (self.propertyname, value))
+            raise ValueError(("%(prop)s value requires to be "
+                              "greater than %(val)s")
+                             % {'prop': self.propertyname, 'val': value})
 
     def validate_greater_or_equal(self):
         pass
