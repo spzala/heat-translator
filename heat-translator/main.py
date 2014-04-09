@@ -4,6 +4,7 @@ import os
 import sys
 from tosca.tosca_tpl import ToscaTpl
 #from tosca.validator import ToscaValidator
+from translation.translate import TOSCATranslator
 from test_tpl_graph import TestTPLGraph
 
 '''Entry point into the heat translation.
@@ -36,11 +37,13 @@ def translate(sourcetype, path):
     output = None
     if sourcetype == "tosca":
         tosca = ToscaTpl(path)
+        translation = TOSCATranslator(tosca)
+        output = translation.translate()
     return output
 
 
 def write_output(output):
-    pass
+    print(output)
 
 
 if __name__ == '__main__':

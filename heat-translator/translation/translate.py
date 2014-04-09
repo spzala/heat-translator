@@ -1,5 +1,11 @@
 #import re
+import os
 import yaml
+from translate_nodetemplates import TranslateNodeTemplates
+from translate_inputs import TranslateInputs
+from translate_outputs import TranslateOutputs
+from hot.hot_template import HotTemplate
+import tosca.utils.yamlparser
 
 SECTIONS = (VERSION, DESCRIPTION, PARAMETERS,
             RESOURCES, OUTPUTS) = \
@@ -17,24 +23,29 @@ yaml_tpl = {}
 
 
 class TOSCATranslator(object):
+
     ''' Invokes translation methods.'''
     def __init__(self, tosca):
         super(TOSCATranslator, self).__init__()
         self.tosca = tosca
+        self.hot_template = HotTemplate()
 
     def translate(self):
-        self._translate_inputs()
-        self._translate_node_templates()
-        self._translate_outputs()
+        self.hot_template.description = self.tosca.description
+        self.hot_template.parameters = self._translate_inputs()
+        self.hot_template.resources = self._translate_node_templates()
+        self.hot_template.outputs = self._translate_outputs()
+        return self.hot_template.output_to_yaml()
 
     def _translate_inputs(self):
-        #TODO
-        pass
+        translator = TranslateInputs(self.tosca.inputs)
+        return translator.translate()
 
     def _translate_node_templates(self):
-        #TODO
-        pass
+        translator = TranslateNodeTemplates(self.tosca.nodetemplates,
+                                            self.hot_template)
+        return translator.translate()
 
     def _translate_outputs(self):
-        #TODO
-        pass
+        translator = TranslateOutputs(self.tosca.outputs)
+        return translator.translate()

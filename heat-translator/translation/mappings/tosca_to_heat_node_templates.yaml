@@ -1,0 +1,13 @@
+type_translation:
+  tosca.nodes.Compute: OS::Nova::Server
+  tosca.nodes.DBMS.MySQL: OS::Nova::Server
+
+properties_translation:
+  tosca.nodes.Compute:
+    disk_size: flavor 
+    num_cpus: flavor
+    mem_size: flavor
+    os_arch: image 
+    os_type: image  
+    os_distribution: image
+    os_version: image

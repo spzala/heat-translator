@@ -1,3 +1,8 @@
+import os
+import yaml
+import tosca.utils.yamlparser
+from hot.hot_resource import HotResource
+
 
 SECTIONS = (TYPE, PROPERTIES, REQUIREMENTS, INTERFACES, LIFECYCLE, INPUT) = \
            ('type', 'properties', 'requirements',
@@ -23,9 +28,37 @@ interested_nodes = []
 
 
 class TranslateNodeTemplates():
-    '''Translate TOSCA Inputs to Heat Parameters'''
+    '''Translate TOSCA Nodes to Heat Resources'''
 
-    def __init__(self, nodetemplates, tosca):
+    def __init__(self, nodetemplates, hot_template):
         self.nodetemplates = nodetemplates
-        self.tosca = tosca
-        #TODO
+        self.hot_template = hot_template
+        nodefile = os.path.join(os.path.dirname(os.path.abspath(__file__)),
+                            "mappings/tosca_to_heat_node_templates.yaml")
+        mappings = tosca.utils.yamlparser.load_yaml(nodefile)
+        self.type_translations = mappings['type_translation']
+        self.property_translations = mappings['properties_translation']
+    
+    def translate(self):
+        return self._translate_nodetemplates()
+    
+    @staticmethod
+    def _translate(value, mapping, err_msg=None):
+        try:
+            return mapping[value]
+        except KeyError as ke:
+            if err_msg:
+                raise KeyError(err_msg % value)
+            else:
+                print("Warning: No translation for '" + value + "' found.")
+                raise ke
+    
+    def _translate_nodetemplates(self):
+
+        hot_resources = []
+        for resource in self.nodetemplates:
+            hot_type = self._translate(resource.type, self.type_translations)
+            hot_properties = resource.translate_HOT_properties()                 
+            hot_resources.append(HotResource(resource.name, hot_type, 
+                                             hot_properties))
+        return hot_resources
