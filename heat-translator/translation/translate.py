@@ -1,10 +1,10 @@
 #import re
 import os
 import yaml
+from hot.hot_template import HotTemplate
 from translate_nodetemplates import TranslateNodeTemplates
 from translate_inputs import TranslateInputs
 from translate_outputs import TranslateOutputs
-from hot.hot_template import HotTemplate
 import tosca.utils.yamlparser
 
 SECTIONS = (VERSION, DESCRIPTION, PARAMETERS,

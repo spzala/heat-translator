@@ -3,9 +3,8 @@ import logging
 import os
 import sys
 from tosca.tosca_tpl import ToscaTpl
-#from tosca.validator import ToscaValidator
-from translation.translate import TOSCATranslator
 from test_tpl_graph import TestTPLGraph
+from translation.translate import TOSCATranslator
 
 '''Entry point into the heat translation.
    Takes two user arguments,
@@ -37,8 +36,8 @@ def translate(sourcetype, path):
     output = None
     if sourcetype == "tosca":
         tosca = ToscaTpl(path)
-        translation = TOSCATranslator(tosca)
-        output = translation.translate()
+        translator = TOSCATranslator(tosca)
+        output = translator.translate()
     return output
 
 

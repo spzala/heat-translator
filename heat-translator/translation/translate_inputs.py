@@ -46,4 +46,5 @@ class TranslateInputs():
         return hot_inputs
 
     def _translate_constraints(self):
+        #TODO: Add more refined constraint translation.
         pass
