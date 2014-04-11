@@ -53,7 +53,6 @@ class NodeType(StatefulEntityType):
                 for x, y in req.iteritems():
                     relation = self._get_relation(x, y)
                     rtype = RelationshipType(relation, x)
-                    #relatednode = self.ntype(x, y)
                     relatednode = NodeType(y)
                     relationship[rtype] = relatednode
         return relationship
@@ -170,8 +169,9 @@ class NodeType(StatefulEntityType):
 
     @property
     def relatednodes(self):
+        if not self.related:
+            for relation, nodetype in self.relationship.iteritems():
+                for tpl in self.TOSCA_DEF.keys():
+                    if tpl == nodetype.type:
+                        self.related[NodeType(tpl)] = relation
         return self.related.keys()
-
-    def relation(self, ntype):
-        if ntype in self.related:
-            return self.related[ntype]

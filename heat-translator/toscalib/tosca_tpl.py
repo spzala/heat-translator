@@ -1,8 +1,8 @@
 import logging
-import tosca.utils.yamlparser
-from tosca.nodetemplate import NodeTemplate
-from tosca.parameters import Input, Output
-from tosca.elements.tpl_relationship_graph import ToscaGraph
+import toscalib.utils.yamlparser
+from toscalib.nodetemplate import NodeTemplate
+from toscalib.parameters import Input, Output
+from toscalib.elements.tpl_relationship_graph import ToscaGraph
 
 SECTIONS = (VERSION, DESCRIPTION, INPUTS,
             NODE_TEMPLATES, OUTPUTS) = \
@@ -17,7 +17,7 @@ class ToscaTpl(object):
     Load the source data.
     '''
     def __init__(self, path):
-        self.tpl = tosca.utils.yamlparser.load_yaml(path)
+        self.tpl = toscalib.utils.yamlparser.load_yaml(path)
         self.version = self._tpl_version()
         self.description = self._tpl_description()
         self.inputs = self._inputs()

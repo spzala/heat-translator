@@ -2,7 +2,7 @@
 import logging
 import os
 import sys
-from tosca.tosca_tpl import ToscaTpl
+from toscalib.tosca_tpl import ToscaTpl
 from test_tpl_graph import TestTPLGraph
 from translation.translate import TOSCATranslator
 
@@ -15,8 +15,10 @@ log = logging.getLogger("heat-translator.log")
 
 
 def main():
-    sourcetype = sys.argv[1]
-    path = sys.argv[2]
+    #sourcetype = sys.argv[1]
+    #path = sys.argv[2]
+    sourcetype = "tosca"
+    path = "/home/openstack/toscacode/heat-translator/heat-translator/toscalib/tests/tosca_single_instance_wordpress.yaml"
     if not sourcetype:
         raise ValueError("Translation type is needed. For example, 'tosca'")
     if os.path.isdir(path):
@@ -36,8 +38,8 @@ def translate(sourcetype, path):
     output = None
     if sourcetype == "tosca":
         tosca = ToscaTpl(path)
-        translator = TOSCATranslator(tosca)
-        output = translator.translate()
+        #translator = TOSCATranslator(tosca)
+        #output = translator.translate()
     return output
 
 

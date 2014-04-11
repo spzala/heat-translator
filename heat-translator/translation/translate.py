@@ -5,7 +5,7 @@ from hot.hot_template import HotTemplate
 from translate_nodetemplates import TranslateNodeTemplates
 from translate_inputs import TranslateInputs
 from translate_outputs import TranslateOutputs
-import tosca.utils.yamlparser
+import toscalib.utils.yamlparser
 
 SECTIONS = (VERSION, DESCRIPTION, PARAMETERS,
             RESOURCES, OUTPUTS) = \

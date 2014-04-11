@@ -1,8 +1,8 @@
 import logging
-from tosca.elements.nodetype import NodeType
-from tosca.elements.capabilitytype import CapabilityTypeDef
-from tosca.elements.interfacestype import InterfacesTypeDef
-from tosca.elements.properties import PropertyDef
+from toscalib.elements.nodetype import NodeType
+from toscalib.elements.capabilitytype import CapabilityTypeDef
+from toscalib.elements.interfacestype import InterfacesTypeDef
+from toscalib.elements.properties import PropertyDef
 
 SECTIONS = (DERIVED_FROM, PROPERTIES, REQUIREMENTS,
             INTERFACES, CAPABILITIES) = \
@@ -115,11 +115,12 @@ class NodeTemplate(NodeType):
 
     @property
     def relatednodes(self):
+        if not self.related:
+            for relation, node in self.tpl_relationship.iteritems():
+                for tpl in self.nodetemplates:
+                    if tpl == node.type:
+                        self.related[NodeTemplate(tpl)] = relation
         return self.related.keys()
-
-    def tpl_relation(self, nodetpl):
-        if nodetpl in self.related:
-            return self.related[nodetpl]
 
     def ref_property(self, cap, cap_name, property):
         requirs = self.tpl_requirements
