@@ -19,8 +19,17 @@ INPUT_CONSTRAINTS = (CONSTRAINTS, DESCRIPTION, LENGTH, RANGE,
                     ('constraints', 'description', 'length', 'range',
                      'min', 'max', 'allowed_values', 'allowed_pattern')
 
-TOSCA_TO_HOT_CONSTRAINTS_ATTRS = {'valid_values': 'allowed_values',
-                                  'valid_pattern': 'allowed_pattern'}
+TOSCA_TO_HOT_CONSTRAINTS_ATTRS = {'equal': 'allowed_values',
+                                  'greater_than': 'range',
+                                  'greater_or_equal': 'range',
+                                  'less_than': 'range',
+                                  'less_or_equal': 'range',
+                                  'in_range': 'range',
+                                  'valid_values': 'allowed_values',
+                                  'length': 'length',
+                                  'min_length': 'length',
+                                  'max_length': 'length',
+                                  'pattern': 'allowed_pattern'}
 
 TOSCA_TO_HOT_INPUT_TYPES = {'string': 'string',
                             'integer': 'number',
@@ -48,14 +57,42 @@ class TranslateInputs():
             if input.constraints:
                 for constraint in input.constraints:
                     constraint_name, value = constraint.iteritems().next()
-                    hc = TOSCA_TO_HOT_CONSTRAINTS_ATTRS[constraint_name]
-                    hot_constraints.append({hc: value})
+                    hc, hvalue = self._translate_constraints(constraint_name,
+                                                             value)
+                    hot_constraints.append({hc: hvalue})
             hot_inputs.append(HotParameter(name=input.name,
                                            type=hot_input_type,
                                            description=input.description,
                                            constraints=hot_constraints))
         return hot_inputs
 
-    def _translate_constraints(self):
-        #TODO(pvaneck): Add more refined constraint translation.
-        pass
+    def _translate_constraints(self, name, value):
+        hot_constraint = TOSCA_TO_HOT_CONSTRAINTS_ATTRS[name]
+
+        # Offset used to support less_than and greater_than.
+        offset = 1
+
+        if name == 'equal':
+            hot_value = [value]
+        elif name == "greater_than":
+            hot_value = {"min": value + offset}
+        elif name == "greater_or_equal":
+            hot_value = {"min": value}
+        elif name == "less_than":
+            hot_value = {"max": value - offset}
+        elif name == "less_or_equal":
+            hot_value = {"max": value}
+        elif name == "in_range":
+            range_values = value.keys()
+            min_value = min(range_values)
+            max_value = max(range_values)
+            hot_value = {"min": min_value, "max": max_value}
+        elif name == "length":
+            hot_value = {"min": value, "max": value}
+        elif name == "min_length":
+            hot_value = {"min": value}
+        elif name == "max_length":
+            hot_value = {"max": value}
+        else:
+            hot_value = value
+        return hot_constraint, hot_value
