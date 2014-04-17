@@ -1,4 +1,4 @@
-from entitytype import EntityType
+from translator.toscalib.elements.entitytype import EntityType
 
 
 class StatefulEntityType(EntityType):

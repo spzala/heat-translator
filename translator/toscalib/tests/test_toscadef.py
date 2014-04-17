@@ -1,5 +1,5 @@
-from toscalib.elements.nodetype import NodeType
-from base import TestBase
+from translator.toscalib.elements.nodetype import NodeType
+from translator.toscalib.tests.base import TestBase
 
 
 class ToscaDefTest(TestBase):

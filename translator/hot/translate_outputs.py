@@ -1,5 +1,5 @@
 
-from hot.syntax.hot_output import HotOutput
+from translator.hot.syntax.hot_output import HotOutput
 
 TOSCA_TO_HOT_GET_ATTRS = {'ip_address':'first_address'}
 

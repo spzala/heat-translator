@@ -1,11 +1,12 @@
-#import re
 import os
+
 import yaml
-from syntax.hot_template import HotTemplate
-from translate_nodetemplates import TranslateNodeTemplates
-from translate_inputs import TranslateInputs
-from translate_outputs import TranslateOutputs
-import toscalib.utils.yamlparser
+
+from translator.hot.syntax.hot_template import HotTemplate
+from translator.hot.translate_inputs import TranslateInputs
+from translator.hot.translate_nodetemplates import TranslateNodeTemplates
+from translator.hot.translate_outputs import TranslateOutputs
+import translator.toscalib.utils.yamlparser
 
 SECTIONS = (VERSION, DESCRIPTION, PARAMETERS,
             RESOURCES, OUTPUTS) = \

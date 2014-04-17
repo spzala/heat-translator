@@ -1,5 +1,5 @@
-from nodetype import NodeType
-from statefulentitytype import StatefulEntityType
+from translator.toscalib.elements.nodetype import NodeType
+from translator.toscalib.elements.statefulentitytype import StatefulEntityType
 
 
 class ToscaMetaModelGraph(StatefulEntityType):

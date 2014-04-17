@@ -1,8 +1,8 @@
-from capabilitytype import CapabilityTypeDef
-from interfacestype import InterfacesTypeDef
-from properties import PropertyDef
-from relationshiptype import RelationshipType
-from statefulentitytype import StatefulEntityType
+from translator.toscalib.elements.capabilitytype import CapabilityTypeDef
+from translator.toscalib.elements.interfacestype import InterfacesTypeDef
+from translator.toscalib.elements.properties import PropertyDef
+from translator.toscalib.elements.relationshiptype import RelationshipType
+from translator.toscalib.elements.statefulentitytype import StatefulEntityType
 
 
 SECTIONS = (DERIVED_FROM, PROPERTIES, REQUIREMENTS,

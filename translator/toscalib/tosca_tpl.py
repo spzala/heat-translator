@@ -1,8 +1,9 @@
 import logging
-import toscalib.utils.yamlparser
-from toscalib.nodetemplate import NodeTemplate
-from toscalib.parameters import Input, Output
-from toscalib.elements.tpl_relationship_graph import ToscaGraph
+
+from translator.toscalib.elements.tpl_relationship_graph import ToscaGraph
+from translator.toscalib.nodetemplate import NodeTemplate
+from translator.toscalib.parameters import Input, Output
+import translator.toscalib.utils.yamlparser
 
 SECTIONS = (VERSION, DESCRIPTION, INPUTS,
             NODE_TEMPLATES, OUTPUTS) = \
@@ -17,7 +18,7 @@ class ToscaTpl(object):
     Load the source data.
     '''
     def __init__(self, path):
-        self.tpl = toscalib.utils.yamlparser.load_yaml(path)
+        self.tpl = translator.toscalib.utils.yamlparser.load_yaml(path)
         self.version = self._tpl_version()
         self.description = self._tpl_description()
         self.inputs = self._inputs()

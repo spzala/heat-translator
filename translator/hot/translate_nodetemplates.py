@@ -1,5 +1,6 @@
 import os
-from syntax.hot_resource import HotResource
+
+from translator.hot.syntax.hot_resource import HotResource
 
 
 SECTIONS = (TYPE, PROPERTIES, REQUIREMENTS, INTERFACES, LIFECYCLE, INPUT) = \

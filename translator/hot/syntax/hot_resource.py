@@ -1,3 +1,4 @@
+
 SECTIONS = (TYPE, PROPERTIES, MEDADATA, DEPENDS_ON, UPDATE_POLICY, 
             DELETION_POLICY) = \
            ('type', 'properties', 'metadata',

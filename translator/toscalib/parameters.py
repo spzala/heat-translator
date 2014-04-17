@@ -1,6 +1,7 @@
 import logging
-from toscalib.elements.constraints import Constraint
-from toscalib.elements.entitytype import EntityType
+
+from translator.toscalib.elements.constraints import Constraint
+from translator.toscalib.elements.entitytype import EntityType
 
 log = logging.getLogger('tosca')
 

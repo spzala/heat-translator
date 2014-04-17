@@ -1,6 +1,7 @@
-import os
 import logging
-import toscalib.utils.yamlparser
+import os
+
+import translator.toscalib.utils.yamlparser
 
 log = logging.getLogger('tosca')
 
@@ -12,7 +13,7 @@ class EntityType(object):
         os.path.dirname(os.path.abspath(__file__)),
         "TOSCA_definition.yaml")
 
-    TOSCA_DEF = toscalib.utils.yamlparser.load_yaml(TOSCA_DEF_FILE)
+    TOSCA_DEF = translator.toscalib.utils.yamlparser.load_yaml(TOSCA_DEF_FILE)
 
     RELATIONSHIP_TYPE = (DEPENDSON, HOSTEDON, CONNECTSTO) = \
                         ('tosca.relationships.DependsOn',

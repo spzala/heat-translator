@@ -1,5 +1,5 @@
-from entitytype import EntityType
-from properties import PropertyDef
+from translator.toscalib.elements.entitytype import EntityType
+from translator.toscalib.elements.properties import PropertyDef
 
 
 SECTIONS = (DERIVED_FROM, PROPERTIES) = \

@@ -1,5 +1,5 @@
-from constraints import Constraint
-from entitytype import EntityType
+from translator.toscalib.elements.constraints import Constraint
+from translator.toscalib.elements.entitytype import EntityType
 
 
 class PropertyDef(EntityType):

@@ -1,8 +1,9 @@
 import logging
-from toscalib.elements.nodetype import NodeType
-from toscalib.elements.capabilitytype import CapabilityTypeDef
-from toscalib.elements.interfacestype import InterfacesTypeDef
-from toscalib.elements.properties import PropertyDef
+
+from translator.toscalib.elements.capabilitytype import CapabilityTypeDef
+from translator.toscalib.elements.interfacestype import InterfacesTypeDef
+from translator.toscalib.elements.nodetype import NodeType
+from translator.toscalib.elements.properties import PropertyDef
 
 SECTIONS = (DERIVED_FROM, PROPERTIES, REQUIREMENTS,
             INTERFACES, CAPABILITIES) = \

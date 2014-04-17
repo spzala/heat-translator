@@ -1,5 +1,5 @@
 
-from syntax.hot_parameter import HotParameter
+from translator.hot.syntax.hot_parameter import HotParameter
 
 
 INPUT_CONSTRAINTS = (CONSTRAINTS, DESCRIPTION, LENGTH, RANGE,

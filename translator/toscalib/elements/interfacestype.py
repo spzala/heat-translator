@@ -1,4 +1,4 @@
-from statefulentitytype import StatefulEntityType
+from translator.toscalib.elements.statefulentitytype import StatefulEntityType
 
 SECTIONS = (LIFECYCLE, CONFIGURE) = \
            ('tosca.interfaces.node.Lifecycle',

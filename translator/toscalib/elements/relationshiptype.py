@@ -1,4 +1,4 @@
-from statefulentitytype import StatefulEntityType
+from translator.toscalib.elements.statefulentitytype import StatefulEntityType
 
 SECTIONS = (DERIVED_FROM, VALIDTARGETS) = \
            ('derived_from', 'valid_targets')

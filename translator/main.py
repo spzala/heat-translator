@@ -2,9 +2,10 @@
 import logging
 import os
 import sys
-from toscalib.tosca_tpl import ToscaTpl
-from test_tpl_graph import TestTPLGraph
-from hot.translate import TOSCATranslator
+
+from translator.hot.translate import TOSCATranslator
+from translator.test_tpl_graph import TestTPLGraph
+from translator.toscalib.tosca_tpl import ToscaTpl
 
 '''Entry point into the heat translation.
    Takes two user arguments,
