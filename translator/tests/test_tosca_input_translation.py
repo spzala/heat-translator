@@ -12,7 +12,7 @@
 # under the License.
 
 from translator.hot import translate_inputs
-from translator.tests.base import TestCase
+from translator.tests.base import TestCasev
 
 
 class TestToscaInputTranslation(TestCase):
@@ -20,7 +20,7 @@ class TestToscaInputTranslation(TestCase):
     def test_translate_constraints(self):
         translator = translate_inputs.TranslateInputs(inputs=None)
 
-        # The tuples in this list each contain a tuple containing the tosca
+        # The tuples in this list each contain a tuple containing the TOSCA
         # constraint name and value along with another tuple containing
         # the corresponding HOT constraint name and value.
         constraint_mappings = \
