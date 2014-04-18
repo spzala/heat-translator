@@ -12,7 +12,7 @@
 # under the License.
 
 from translator.hot import translate_inputs
-from translator.tests.base import TestCasev
+from translator.tests.base import TestCase
 
 
 class TestToscaInputTranslation(TestCase):
