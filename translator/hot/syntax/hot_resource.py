@@ -41,56 +41,50 @@ class HotResource(object):
     
     def handle_life_cycle(self):
         hot_resources = []
+        deploy_lookup = {}
 
-        #create HotResrouce for the interfaces except the first
-        for interface in self.nodetemplate.tpl_interfaces[1:]:
-            config_name = self.name+'_'+interface.name+'_config'
+        # create HotResrouce for each interface
+        # the create interface is special since it's the minimum required
+        # so use the current HotResource for create
+        # hold the original name since it will be changed during the transformation
+        node_name = self.name
+        for interface in self.nodetemplate.tpl_interfaces:
+            config_name = node_name+'_'+interface.name+'_config'
+            deploy_name = node_name+'_'+interface.name+'_deploy'
             hot_resources.append(HotResource(self.nodetemplate, 
                                          config_name, 
                                          'OS::Heat::SoftwareConfig', 
                                          {'config':interface.implementation}))
-            hot_resources.append(HotResource(self.nodetemplate, 
-                                         self.name+'_'+interface.name+'_deploy', 
-                                         'OS::Heat::SoftwareDeployment', 
-                                         {'config':config_name}))
+            if interface.name=='create':
+                deploy_resource = self
+                self.name = deploy_name
+                self.type = 'OS::Heat::SoftwareDeployment'
+                self.properties = {'config': config_name}
+            else:
+                deploy_resource = HotResource(self.nodetemplate, 
+                                              deploy_name, 
+                                              'OS::Heat::SoftwareDeployment', 
+                                              {'config':config_name})
+            hot_resources.append(deploy_resource)
+            deploy_lookup[interface.name] = deploy_resource
+
         
-        # let the current HotResource be the first interface
-        if len(self.nodetemplate.tpl_interfaces) >=1:
-            interface = self.nodetemplate.tpl_interfaces[0]
-            config_name = self.name+'_'+interface.name+'_config'
-            self.name +='_'+interface.name+'_deploy'
-            self.type = 'OS::Heat::SoftwareDeployment'
-            self.properties = {'config': config_name}
-            hot_resources.append(HotResource(self.nodetemplate, 
-                                             config_name, 
-                                             'OS::Heat::SoftwareConfig', 
-                                             {'config':interface.implementation}))
-        
+        # Add dependencies for the set of HOT resources in the sequence:  create, start, configure
+        # todo: find some better way to encode this implicit sequence
+        create_resource=deploy_lookup.get('create')
+        start_resource=deploy_lookup.get('start')
+        configure_resource=deploy_lookup.get('configure')
+        if configure_resource:
+            if start_resource:
+                configure_resource.depends_on.append(start_resource.name)
+            elif create_resource:
+                configure_resource.depends_on.append(create_resource.name)
+        if start_resource:
+            if create_resource:
+                start_resource.depends_on.append(create_resource.name)
+                
         return hot_resources
 
-    def _software_deployment_for_interface(self, implementation):
-        # sequence:  create, start, configure
- 
-        deploy_name = self.name+'_'+lifecycle+'_deploy'
-        deploy_properties = {'config': config_name }
-        hot_deploy = HotResource(self.nodetemplate, deploy_name, 'OS::Heat::SoftwareDeployment', deploy_properties)
-            
-        hot_resources.append(hot_deploy)
-        hot_resources.append(hot_config)
-            
-        return hot_resources
-    
-    def _software_config_for_interface(self, lifecycle, action):
-        config_name = self.name+'_'+lifecycle+'_config'
-        config_properties = {'config': self._get_implementation(action)}
-        hot_config = HotResource(self.nodetemplate, config_name, 'OS::Heat::SoftwareConfig', config_properties)
-        pass
-    
-    def _get_implementation(self, action):
-        if isinstance(action,basestring):
-            return {'getfile': action}
-        elif isinstance(action,dict):
-            return {'getfile': action['implementation']}
         
     def get_dict_output(self):
         resource_sections = {TYPE: self.type}

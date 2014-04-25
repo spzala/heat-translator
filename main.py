@@ -48,8 +48,8 @@ def translate(sourcetype, path):
     output = None
     if sourcetype == "tosca":
         tosca = ToscaTpl(path)
-        #translator = TOSCATranslator(tosca)
-        #output = translator.translate()
+        translator = TOSCATranslator(tosca)
+        output = translator.translate()
     return output
 
 
