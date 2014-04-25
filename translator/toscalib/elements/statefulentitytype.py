@@ -7,7 +7,7 @@ class StatefulEntityType(EntityType):
                                             'configure', 'start',
                                             'stop', 'delete']
 
-    interfaces_relationship_confiure_operations = ['post_configure_source',
+    interfaces_relationship_configure_operations = ['post_configure_source',
                                                    'post_configure_target',
                                                    'add_target',
                                                    'remove_target']

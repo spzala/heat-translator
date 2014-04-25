@@ -19,27 +19,90 @@ SECTIONS = (TYPE, PROPERTIES, MEDADATA, DEPENDS_ON, UPDATE_POLICY,
 
 class HotResource(object):
 
-    def __init__(self, name, type, properties=None, metadata=None,
+    def __init__(self, nodetemplate, name=None, type=None, properties=None, metadata=None,
                  depends_on=None, update_policy=None, deletion_policy=None):
-        self.name = name
+        self.nodetemplate = nodetemplate
+        if name:
+            self.name = name
+        else:
+            self.name = nodetemplate.name
         self.type = type
         self.properties = properties
         self.metadata = metadata
-        self.depends_on = depends_on
+        if depends_on:
+            self.depends_on = depends_on
+        else:
+            self.depends_on = []
         self.update_policy = update_policy
         self.deletion_policy = deletion_policy
 
+    def handle_properties(self):
+        pass
+    
+    def handle_life_cycle(self):
+        hot_resources = []
+
+        #create HotResrouce for the interfaces except the first
+        for interface in self.nodetemplate.tpl_interfaces[1:]:
+            config_name = self.name+'_'+interface.name+'_config'
+            hot_resources.append(HotResource(self.nodetemplate, 
+                                         config_name, 
+                                         'OS::Heat::SoftwareConfig', 
+                                         {'config':interface.implementation}))
+            hot_resources.append(HotResource(self.nodetemplate, 
+                                         self.name+'_'+interface.name+'_deploy', 
+                                         'OS::Heat::SoftwareDeployment', 
+                                         {'config':config_name}))
+        
+        # let the current HotResource be the first interface
+        if len(self.nodetemplate.tpl_interfaces) >=1:
+            interface = self.nodetemplate.tpl_interfaces[0]
+            config_name = self.name+'_'+interface.name+'_config'
+            self.name +='_'+interface.name+'_deploy'
+            self.type = 'OS::Heat::SoftwareDeployment'
+            self.properties = {'config': config_name}
+            hot_resources.append(HotResource(self.nodetemplate, 
+                                             config_name, 
+                                             'OS::Heat::SoftwareConfig', 
+                                             {'config':interface.implementation}))
+        
+        return hot_resources
+
+    def _software_deployment_for_interface(self, implementation):
+        # sequence:  create, start, configure
+ 
+        deploy_name = self.name+'_'+lifecycle+'_deploy'
+        deploy_properties = {'config': config_name }
+        hot_deploy = HotResource(self.nodetemplate, deploy_name, 'OS::Heat::SoftwareDeployment', deploy_properties)
+            
+        hot_resources.append(hot_deploy)
+        hot_resources.append(hot_config)
+            
+        return hot_resources
+    
+    def _software_config_for_interface(self, lifecycle, action):
+        config_name = self.name+'_'+lifecycle+'_config'
+        config_properties = {'config': self._get_implementation(action)}
+        hot_config = HotResource(self.nodetemplate, config_name, 'OS::Heat::SoftwareConfig', config_properties)
+        pass
+    
+    def _get_implementation(self, action):
+        if isinstance(action,basestring):
+            return {'getfile': action}
+        elif isinstance(action,dict):
+            return {'getfile': action['implementation']}
+        
     def get_dict_output(self):
         resource_sections = {TYPE: self.type}
-        if self.properties:
+        if hasattr(self, 'properties'):
             resource_sections[PROPERTIES] = self.properties
-        if self.metadata:
+        if hasattr(self, 'metadata'):
             resource_sections[MEDADATA] = self.metadata
-        if self.depends_on:
+        if hasattr(self, 'depends_on'):
             resource_sections[DEPENDS_ON] = self.depends_on
-        if self.update_policy:
+        if hasattr(self, 'update_policy'):
             resource_sections[UPDATE_POLICY] = self.update_policy
-        if self.deletion_policy:
+        if hasattr(self, 'deletion_policy'):
             resource_sections[DELETION_POLICY] = self.deletion_policy
 
         return {self.name: resource_sections}

@@ -5,7 +5,7 @@ description: >
 
 inputs:
   cpus:
-    type: number
+    type: integer
     description: Number of CPUs for the server.
     constraints:
       - valid_values: [ 1, 2, 4, 8 ]
@@ -69,10 +69,10 @@ node_templates:
       tosca.interfaces.node.Lifecycle:
         create: mysql_dbms_install.sh
         start: mysql_dbms_start.sh
-      configure: 
-        implementation: mysql_dbms_configure
-        input:
-          db_root_password: { get_property: [ mysql_dbms, dbms_root_password ] }
+        configure: 
+          implementation: mysql_dbms_configure.sh
+          input:
+            db_root_password: { get_property: [ mysql_dbms, dbms_root_password ] }
 
   webserver:
     type: tosca.nodes.WebServer
