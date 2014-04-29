@@ -88,15 +88,15 @@ class HotResource(object):
         
     def get_dict_output(self):
         resource_sections = {TYPE: self.type}
-        if hasattr(self, 'properties'):
+        if self.properties:
             resource_sections[PROPERTIES] = self.properties
-        if hasattr(self, 'metadata'):
+        if self.metadata:
             resource_sections[MEDADATA] = self.metadata
-        if hasattr(self, 'depends_on'):
+        if self.depends_on:
             resource_sections[DEPENDS_ON] = self.depends_on
-        if hasattr(self, 'update_policy'):
+        if self.update_policy:
             resource_sections[UPDATE_POLICY] = self.update_policy
-        if hasattr(self, 'deletion_policy'):
+        if self.deletion_policy:
             resource_sections[DELETION_POLICY] = self.deletion_policy
 
         return {self.name: resource_sections}

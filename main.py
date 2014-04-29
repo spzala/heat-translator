@@ -29,6 +29,8 @@ log = logging.getLogger("heat-translator.log")
 def main():
     sourcetype = sys.argv[1]
     path = sys.argv[2]
+    if len(sys.argv)>3:
+        parse_parameters(sys.argv[3])
     if not sourcetype:
         raise ValueError("Translation type is needed. For example, 'tosca'")
     if os.path.isdir(path):
@@ -42,7 +44,10 @@ def main():
             write_output(heat_tpl)
     else:
         raise ValueError(("%(path)s is not a valid file.") % {'path': path})
-
+    
+    
+def parse_parameters(parameter_list):
+    pass
 
 def translate(sourcetype, path):
     output = None
