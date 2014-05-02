@@ -62,4 +62,5 @@ class HotTemplate(object):
         dict_output.update({self.OUTPUTS: all_outputs})
 
         yaml_string = yaml.dump(dict_output, default_flow_style=False)
+        yaml_string = yaml_string.replace('\'','')                      # get rid of the '' from yaml.dump around numbers
         return version_string + desc_str + yaml_string

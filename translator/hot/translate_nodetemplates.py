@@ -63,11 +63,6 @@ class TranslateNodeTemplates():
             hot_resources.append(hot_node)
             hot_lookup[node] = hot_node
         
-        # Copy the initial dependencies based on the relationship in the TOSCA template
-        #for resource in hot_resources:
-        #    for node in resource.nodetemplate.relatednodes:
-        #        resource.depends_on.append(hot_lookup[node].name)
-        
         # Handle life cycle operations: this may expand each node into multiple HOT resources 
         # and may change their name
         lifecycle_resources = []
@@ -79,11 +74,21 @@ class TranslateNodeTemplates():
         # Copy the initial dependencies based on the relationship in the TOSCA template
         for node in self.nodetemplates:
             for node_depend in node.relatednodes:
-                hot_lookup[node].depends_on.append(hot_lookup[node_depend].name)
+                # if the source of dependency is a server, add dependency as properties.get_resource
+                if node_depend.type=='tosca.nodes.Compute':
+                    hot_lookup[node].properties['server'] = {'get_resource':hot_lookup[node_depend].name}
+                # for all others, add dependency as depends_on
+                else:
+                    hot_lookup[node].depends_on.append(hot_lookup[node_depend].topofchain())
         
+        # handle hosting relationship
+        for resource in hot_resources:
+            resource.handle_hosting()
+            
         # Handle properties
         for resource in hot_resources:
             resource.handle_properties()
             
+        
         return hot_resources
     

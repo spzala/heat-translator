@@ -20,12 +20,14 @@ from translator.hot.translate_outputs import TranslateOutputs
 class TOSCATranslator(object):
     '''Invokes translation methods.'''
 
-    def __init__(self, tosca):
+    def __init__(self, tosca, parsed_params):
         super(TOSCATranslator, self).__init__()
         self.tosca = tosca
         self.hot_template = HotTemplate()
+        self.parsed_params = parsed_params
 
     def translate(self):
+        self.resolve_input()
         self.hot_template.description = self.tosca.description
         self.hot_template.parameters = self._translate_inputs()
         self.hot_template.resources = self._translate_node_templates()
@@ -33,7 +35,7 @@ class TOSCATranslator(object):
         return self.hot_template.output_to_yaml()
 
     def _translate_inputs(self):
-        translator = TranslateInputs(self.tosca.inputs)
+        translator = TranslateInputs(self.tosca.inputs, self.parsed_params)
         return translator.translate()
 
     def _translate_node_templates(self):
@@ -44,3 +46,17 @@ class TOSCATranslator(object):
     def _translate_outputs(self):
         translator = TranslateOutputs(self.tosca.outputs)
         return translator.translate()
+    
+    # check all properties for all node and ensure they are resolved to actual value
+    def resolve_input(self):
+        for n in self.tosca.nodetemplates:
+            for node_prop in n.tpl_properties:
+                if isinstance(node_prop.value,dict):
+                    try:
+                        #print " -> resolving %s with input %s" % (node_prop.name,node_prop.value['get_input'])
+                        #this_input_name = node_prop.value['get_input']
+                        cli_input = self.parsed_params[node_prop.value['get_input']]
+                        #node_prop.value = cli_input
+                        #print " -> resolving %s with input %s" % (node_prop.name,cli_input)
+                    except:
+                        raise ValueError('Must specify all input values in TOSCA template, missing %s' % node_prop.value['get_input'])

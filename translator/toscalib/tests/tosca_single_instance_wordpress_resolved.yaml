@@ -88,7 +88,7 @@ node_templates:
     properties:
       # compute properties (flavor)
       disk_size: 10
-      num_cpus: { get_input: cpus }
+      num_cpus: 1
       mem_size: 4096
       # host image properties
       os_arch: x86_64 

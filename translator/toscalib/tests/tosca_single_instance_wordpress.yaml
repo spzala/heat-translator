@@ -62,7 +62,7 @@ node_templates:
     type: tosca.nodes.DBMS
     properties:
       dbms_root_password: { get_input: db_root_pwd }
-      dbms_port: { get_input: db_root_pwd }
+      dbms_port: { get_input: db_port }
     requirements:
       - host: server
     interfaces:

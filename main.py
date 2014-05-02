@@ -17,6 +17,7 @@ import sys
 
 from translator.hot.translate import TOSCATranslator
 from translator.toscalib.tosca_tpl import ToscaTpl
+from translator.test_tpl_graph import TestTPLGraph
 
 '''Entry point into the heat translation.
    Takes two user arguments,
@@ -26,11 +27,14 @@ from translator.toscalib.tosca_tpl import ToscaTpl
 log = logging.getLogger("heat-translator.log")
 
 
+
 def main():
     sourcetype = sys.argv[1]
     path = sys.argv[2]
+    parsed_params = {}
+    
     if len(sys.argv)>3:
-        parse_parameters(sys.argv[3])
+        parsed_params = parse_parameters(sys.argv[3])    
     if not sourcetype:
         raise ValueError("Translation type is needed. For example, 'tosca'")
     if os.path.isdir(path):
@@ -39,7 +43,7 @@ def main():
     if not path.endswith(".yaml"):
         raise ValueError("Only YAML file is supported at this time.")
     elif os.path.isfile(path):
-        heat_tpl = translate(sourcetype, path)
+        heat_tpl = translate(sourcetype, path, parsed_params)
         if heat_tpl:
             write_output(heat_tpl)
     else:
@@ -47,13 +51,22 @@ def main():
     
     
 def parse_parameters(parameter_list):
-    pass
+    parsed_inputs = {}
+    if parameter_list.startswith('--parameters'):
+        inputs = parameter_list.split('--parameters=')[1].replace('"','').split(';')   # todo:  add more error handling for the expected format
+        for param in inputs:
+            keyvalue = param.split('=')
+            parsed_inputs[keyvalue[0]] = keyvalue[1]
+    else:
+        raise ValueError("%(param) is not a valid parameter" % parameter_list)
+    return parsed_inputs
 
-def translate(sourcetype, path):
+def translate(sourcetype, path, parsed_params):
     output = None
     if sourcetype == "tosca":
         tosca = ToscaTpl(path)
-        translator = TOSCATranslator(tosca)
+        #TestTPLGraph(tosca).show_properties()
+        translator = TOSCATranslator(tosca, parsed_params)
         output = translator.translate()
     return output
 

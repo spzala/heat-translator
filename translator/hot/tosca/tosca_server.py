@@ -22,10 +22,14 @@ FLAVORS = {'m1.xlarge': {'mem_size': 16384, 'disk_size': 160, 'num_cpus': 8},
            'm1.micro': {'mem_size': 128, 'disk_size': 0, 'num_cpus': 1},
            'm1.nano': {'mem_size': 64, 'disk_size': 0, 'num_cpus': 1}}
 
-IMAGES = {'F18-x86_64-cfntools': {'os_arch': 'x86_64',
+IMAGES = {'fedora-amd64-heat-config': {'os_arch': 'x86_64',
+                                       'os_type': 'Linux',
+                                       'os_distribution': 'Fedora',
+                                       'os_version': '18'},
+          'F18-x86_64-cfntools': {'os_arch': 'x86_64',
                                   'os_type': 'Linux',
                                   'os_distribution': 'Fedora',
-                                  'os_version': '18'},
+                                  'os_version': '19'},
           'Fedora-x86_64-20-20131211.1-sda': {'os_arch': 'x86_64',
                                               'os_type': 'Linux',
                                               'os_distribution': 'Fedora',
@@ -33,11 +37,7 @@ IMAGES = {'F18-x86_64-cfntools': {'os_arch': 'x86_64',
           'cirros-0.3.1-x86_64-uec': {'os_arch': 'x86_64',
                                       'os_type': 'Linux',
                                       'os_distribution': 'CirrOS',
-                                      'os_version': '0.3.1'},
-          'fedora-amd64-heat-config': {'os_arch': 'x86_64',
-                                       'os_type': 'Linux',
-                                       'os_distribution': 'Fedora',
-                                       'os_version': '18'}}
+                                      'os_version': '0.3.1'}}
 
 class ToscaServer(HotResource):
     toscatype = 'tosca.nodes.Compute'
@@ -51,7 +51,11 @@ class ToscaServer(HotResource):
     #    self.type = 'OS::Nova::Server'
     
     def handle_properties(self):
-        self.properties = self.translate_compute_flavor_and_image(self.nodetemplate.properties)
+        self.properties = self.translate_compute_flavor_and_image(self.nodetemplate.tpl_properties)
+        self.properties['user_data_format'] = 'SOFTWARE_CONFIG'
+        # todo:  handle user key
+        # hardcoded here for testint
+        self.properties['key_name'] = 'userkey'
     
     # To be reorganized later
     def translate_compute_flavor_and_image(self, properties):
