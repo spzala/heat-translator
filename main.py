@@ -20,7 +20,6 @@ import sys
 
 from translator.hot.translate import TOSCATranslator
 from translator.toscalib.tosca_tpl import ToscaTpl
-from translator.test_tpl_graph import TestTPLGraph
 
 '''Entry point into the heat translation.
    Takes two user arguments,
