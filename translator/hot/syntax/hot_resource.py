@@ -76,8 +76,8 @@ class HotResource(object):
         # the interface operations
         for interface in self.nodetemplate.tpl_interfaces:
             if interface.name in interfaces_deploy_sequence:
-                config_name = node_name+'_'+interface.name+'_config'
-                deploy_name = node_name+'_'+interface.name+'_deploy'
+                config_name = node_name + '_' + interface.name + '_config'
+                deploy_name = node_name + '_' + interface.name + '_deploy'
                 hot_resources.append(
                     HotResource(self.nodetemplate,
                                 config_name,

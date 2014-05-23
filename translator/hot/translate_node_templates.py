@@ -11,7 +11,6 @@
 # License for the specific language governing permissions and limitations
 # under the License.
 
-from translator.hot.syntax.hot_resource import HotResource
 from translator.hot.tosca.tosca_server import ToscaServer
 from translator.hot.tosca.tosca_webserver import ToscaWebserver
 from translator.hot.tosca.tosca_mysql_dbms import ToscaMysqlDbms
