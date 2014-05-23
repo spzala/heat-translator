@@ -13,6 +13,7 @@
 
 
 class HotOutput(object):
+    ''' Attributes for HOT output section. '''
 
     def __init__(self, name, value, description=None):
         self.name = name

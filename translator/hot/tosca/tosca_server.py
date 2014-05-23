@@ -13,7 +13,13 @@
 
 from translator.hot.syntax.hot_resource import HotResource
 
-# Hardcoded here for now, to be queried from the environment later
+# A design issue to be resolved is how to translate the generic TOSCA server
+# properties to OpenStack flavors and images.  At the Atlanta design summit,
+# there was discussion on using Glance to store metadata and Graffiti to
+# describe artifacts.  We will follow these projects to see if they can be
+# leveraged for this TOSCA translation.
+# For development purpose at this time, we temporarily hardcode a list of
+# flavors and images here
 FLAVORS = {'m1.xlarge': {'mem_size': 16384, 'disk_size': 160, 'num_cpus': 8},
            'm1.large': {'mem_size': 8192, 'disk_size': 80, 'num_cpus': 4},
            'm1.medium': {'mem_size': 4096, 'disk_size': 40, 'num_cpus': 2},
@@ -39,25 +45,26 @@ IMAGES = {'fedora-amd64-heat-config': {'os_arch': 'x86_64',
                                       'os_distribution': 'CirrOS',
                                       'os_version': '0.3.1'}}
 
+
 class ToscaServer(HotResource):
+    ''' Translate TOSCA node type tosca.nodes.Compute'''
+
     toscatype = 'tosca.nodes.Compute'
-    
+
     def __init__(self, nodetemplate):
-        super(ToscaServer,self).__init__(nodetemplate, type='OS::Nova::Server')
+        super(ToscaServer, self).__init__(nodetemplate,
+                                          type='OS::Nova::Server')
         pass
-    
-    #def handle_life_cycle(self):
-    #    self.name = self.nodetemplate.name
-    #    self.type = 'OS::Nova::Server'
-    
+
     def handle_properties(self):
-        self.properties = self.translate_compute_flavor_and_image(self.nodetemplate.tpl_properties)
+        self.properties = self.translate_compute_flavor_and_image(
+            self.nodetemplate.tpl_properties)
         self.properties['user_data_format'] = 'SOFTWARE_CONFIG'
         # todo:  handle user key
-        # hardcoded here for testint
+        # hardcoded here for testing
         self.properties['key_name'] = 'userkey'
-    
-    # To be reorganized later
+
+    # To be reorganized later based on new development in Glance and Graffiti
     def translate_compute_flavor_and_image(self, properties):
         hot_properties = {}
         tosca_props = {}
@@ -89,9 +96,9 @@ class ToscaServer(HotResource):
         disk = properties.get('disk_size')
         match_cpu_mem_disk = self._match_flavors(match_cpu_mem, FLAVORS,
                                                  'disk_size', disk)
-        # for now just pick the first flavor, later try to pick one with the
+        # for now just pick the first flavor
+        # the selection can be based on some heuristic, e.g. pick one with the
         # least resource
-        #print 'Found %s matches' % len(match_cpu_mem_disk)
         if len(match_cpu_mem_disk):
             return match_cpu_mem_disk[0]
 
@@ -108,7 +115,7 @@ class ToscaServer(HotResource):
         os_version = properties.get('os_version')
         match_version = self._match_images(match_distribution, IMAGES,
                                            'os_version', os_version)
-        #print 'Found %s matches' % len(match_version)
+
         if len(match_version):
             return match_version[0]
 

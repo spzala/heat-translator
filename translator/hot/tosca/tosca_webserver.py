@@ -13,17 +13,15 @@
 
 from translator.hot.syntax.hot_resource import HotResource
 
+
 class ToscaWebserver(HotResource):
+    ''' Translate TOSCA node type tosca.nodes.WebServer'''
+
     toscatype = 'tosca.nodes.WebServer'
-    
+
     def __init__(self, nodetemplate):
-        super(ToscaWebserver,self).__init__(nodetemplate)
+        super(ToscaWebserver, self).__init__(nodetemplate)
         pass
-    
-    #def handle_life_cycle(self):
-    #    self.name = self.nodetemplate.name
-    #    self.type = 'OS::Heat::SoftwareDeployment'
-    #    super(ToscaWebserver,self).handle_life_cycle()
-    
+
     def handle_properties(self):
         pass

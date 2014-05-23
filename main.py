@@ -27,14 +27,13 @@ from translator.test_tpl_graph import TestTPLGraph
 log = logging.getLogger("heat-translator.log")
 
 
-
 def main():
     sourcetype = sys.argv[1]
     path = sys.argv[2]
     parsed_params = {}
-    
-    if len(sys.argv)>3:
-        parsed_params = parse_parameters(sys.argv[3])    
+
+    if len(sys.argv) > 3:
+        parsed_params = parse_parameters(sys.argv[3])
     if not sourcetype:
         raise ValueError("Translation type is needed. For example, 'tosca'")
     if os.path.isdir(path):
@@ -48,12 +47,14 @@ def main():
             write_output(heat_tpl)
     else:
         raise ValueError(("%(path)s is not a valid file.") % {'path': path})
-    
-    
+
+
 def parse_parameters(parameter_list):
     parsed_inputs = {}
     if parameter_list.startswith('--parameters'):
-        inputs = parameter_list.split('--parameters=')[1].replace('"','').split(';')   # todo:  add more error handling for the expected format
+        # todo:  add more error handling for the expected format
+        inputs = parameter_list.split('--parameters=')[1].\
+            replace('"', '').split(';')
         for param in inputs:
             keyvalue = param.split('=')
             parsed_inputs[keyvalue[0]] = keyvalue[1]
@@ -61,11 +62,12 @@ def parse_parameters(parameter_list):
         raise ValueError("%(param) is not a valid parameter" % parameter_list)
     return parsed_inputs
 
+
 def translate(sourcetype, path, parsed_params):
     output = None
     if sourcetype == "tosca":
         tosca = ToscaTpl(path)
-        #TestTPLGraph(tosca).show_properties()
+        # TestTPLGraph(tosca).show_properties()
         translator = TOSCATranslator(tosca, parsed_params)
         output = translator.translate()
     return output
@@ -73,7 +75,6 @@ def translate(sourcetype, path, parsed_params):
 
 def write_output(output):
     print(output)
-
 
 if __name__ == '__main__':
     main()

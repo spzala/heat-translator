@@ -27,7 +27,7 @@ class TOSCATranslator(object):
         self.parsed_params = parsed_params
 
     def translate(self):
-        self.resolve_input()
+        self._resolve_input()
         self.hot_template.description = self.tosca.description
         self.hot_template.parameters = self._translate_inputs()
         self.hot_template.resources = self._translate_node_templates()
@@ -46,17 +46,17 @@ class TOSCATranslator(object):
     def _translate_outputs(self):
         translator = TranslateOutputs(self.tosca.outputs)
         return translator.translate()
-    
-    # check all properties for all node and ensure they are resolved to actual value
-    def resolve_input(self):
+
+    # check all properties for all node and ensure they are resolved
+    # to actual value
+    def _resolve_input(self):
         for n in self.tosca.nodetemplates:
             for node_prop in n.tpl_properties:
-                if isinstance(node_prop.value,dict):
+                if isinstance(node_prop.value, dict):
                     try:
-                        #print " -> resolving %s with input %s" % (node_prop.name,node_prop.value['get_input'])
-                        #this_input_name = node_prop.value['get_input']
-                        cli_input = self.parsed_params[node_prop.value['get_input']]
-                        #node_prop.value = cli_input
-                        #print " -> resolving %s with input %s" % (node_prop.name,cli_input)
+                        cli_input = self.parsed_params[node_prop.
+                                                       value['get_input']]
                     except:
-                        raise ValueError('Must specify all input values in TOSCA template, missing %s' % node_prop.value['get_input'])
+                        raise ValueError('Must specify all input values in \
+                                        TOSCA template, missing %s' %
+                                        node_prop.value['get_input'])

@@ -13,17 +13,15 @@
 
 from translator.hot.syntax.hot_resource import HotResource
 
+
 class ToscaMysqlDatabase(HotResource):
+    ''' Translate TOSCA node type tosca.nodes.Database'''
+
     toscatype = 'tosca.nodes.Database'
-    
+
     def __init__(self, nodetemplate):
-        super(ToscaMysqlDatabase,self).__init__(nodetemplate)
+        super(ToscaMysqlDatabase, self).__init__(nodetemplate)
         pass
-    
-    #def handle_life_cycle(self):
-    #    self.name = self.nodetemplate.name
-    #    self.type = 'OS::Heat::SoftwareDeployment'
-    #    super(ToscaMysqlDatabase,self).handle_life_cycle()
-    
+
     def handle_properties(self):
         pass

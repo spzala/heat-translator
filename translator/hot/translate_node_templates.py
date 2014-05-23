@@ -29,7 +29,8 @@ REQUIRES = (CONTAINER, DEPENDENCY, DATABASE_ENDPOINT, CONNECTION, HOST) = \
 INTERFACES_STATE = (CREATE, START, CONFIGURE, START, DELETE) = \
                    ('create', 'stop', 'configure', 'start', 'delete')
 
-#dict to look up HOT translation class, can be replaced later by function to scan the classes in translator.hot.tosca
+# dict to look up HOT translation class, can be replaced later by function
+# to scan the classes in translator.hot.tosca
 TOSCA_TO_HOT_TYPE = {'tosca.nodes.Compute': ToscaServer,
                      'tosca.nodes.WebServer': ToscaWebserver,
                      'tosca.nodes.DBMS': ToscaMysqlDbms,
@@ -53,42 +54,43 @@ class TranslateNodeTemplates():
         return self._translate_nodetemplates()
 
     def _translate_nodetemplates(self):
-
         hot_resources = []
         hot_lookup = {}
-        
-        # Copy the TOSCA graph: nodetemplate 
+
+        # Copy the TOSCA graph: nodetemplate
         for node in self.nodetemplates:
             hot_node = TOSCA_TO_HOT_TYPE[node.type](node)
             hot_resources.append(hot_node)
             hot_lookup[node] = hot_node
-        
-        # Handle life cycle operations: this may expand each node into multiple HOT resources 
-        # and may change their name
+
+        # Handle life cycle operations: this may expand each node into
+        # multiple HOT resources and may change their name
         lifecycle_resources = []
         for resource in hot_resources:
             expanded = resource.handle_life_cycle()
             lifecycle_resources += expanded
         hot_resources += lifecycle_resources
-        
-        # Copy the initial dependencies based on the relationship in the TOSCA template
+
+        # Copy the initial dependencies based on the relationship in
+        # the TOSCA template
         for node in self.nodetemplates:
             for node_depend in node.relatednodes:
-                # if the source of dependency is a server, add dependency as properties.get_resource
-                if node_depend.type=='tosca.nodes.Compute':
-                    hot_lookup[node].properties['server'] = {'get_resource':hot_lookup[node_depend].name}
+                # if the source of dependency is a server, add dependency
+                # as properties.get_resource
+                if node_depend.type == 'tosca.nodes.Compute':
+                    hot_lookup[node].properties['server'] = \
+                        {'get_resource': hot_lookup[node_depend].name}
                 # for all others, add dependency as depends_on
                 else:
-                    hot_lookup[node].depends_on.append(hot_lookup[node_depend].topofchain())
-        
+                    hot_lookup[node].depends_on.append(hot_lookup[node_depend].
+                                                       top_of_chain())
+
         # handle hosting relationship
         for resource in hot_resources:
             resource.handle_hosting()
-            
+
         # Handle properties
         for resource in hot_resources:
             resource.handle_properties()
-            
-        
+
         return hot_resources
-    

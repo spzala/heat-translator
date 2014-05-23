@@ -16,6 +16,7 @@ KEYS = (TYPE, DESCRIPTION, DEFAULT, CONSTRAINTS, HIDDEN, LABEL) = \
 
 
 class HotParameter(object):
+    ''' Attributes for HOT parameter section. '''
 
     def __init__(self, name, type, label=None, description=None, default=None,
                  hidden=None, constraints=None):

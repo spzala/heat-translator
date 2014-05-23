@@ -99,19 +99,3 @@ class TranslateInputs():
         else:
             hot_value = value
         return hot_constraint, hot_value
-
- 
-    # check all properties for all node and ensure they are resolved to actual values given at the CLI
-    # use these values as the default in HOT parameters
-    def resolve_input(self):
-        for n in self.tosca.nodetemplates:
-            for node_prop in n.tpl_properties:
-                if isinstance(node_prop.value,dict):
-                    try:
-                        #print " -> resolving %s with input %s" % (node_prop.name,node_prop.value['get_input'])
-                        #this_input_name = node_prop.value['get_input']
-                        cli_input = self.parsed_params[node_prop.value['get_input']]
-                        node_prop.value = cli_input
-                        #print " -> resolving %s with input %s" % (node_prop.name,cli_input)
-                    except:
-                        raise ValueError('Must specify all input values in TOSCA template, missing %s' % node_prop.value['get_input'])
