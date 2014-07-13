@@ -1,0 +1,84 @@
+tosca_definitions_version: tosca_simple_1.0
+
+description: >
+  This TOSCA definitions file contains type definitions for the application
+  layer (i.e. WordPress application and WordPress database) and the middleware
+  layer (Apache and MySQL) needed for deploying the WordPress application.
+  All those types derive from TOSCA base types, but provide the actual
+  implementation artifacts for the respective software components.
+
+node_types:
+  tosca.nodes.DBMS.MySQL:
+    derived_from: tosca.nodes.DBMS
+    properties:
+      dbms_port:
+        description: reflect the default MySQL server port
+        default: 3306
+    capabilities:
+      host: 
+        type: Container
+        containee_types: [ tosca.nodes.Database.MySQL ]
+    interfaces:
+      Lifecycle:
+        create:
+          implementation: ../scripts/MySQL/install_mysql.sh
+        configure:
+          implementation: ../scripts/MySQL/configure_mysql.sh
+        start:
+          implementation: ../scripts/MySQL/start_mysql.sh
+        stop:
+          implementation: ../scripts/MySQL/stop_mysql.sh
+
+  tosca.nodes.Database.MySQL:
+    derived_from: tosca.nodes.DBMS
+    capabilities:
+      database_endpoint:
+        type: tosca.capabilities.DatabaseEndpoint
+        properties:
+          protocol: tcp
+          port: 3306 # how do we set values (default values) on types when the
+                     # parent type already defines data type etc.? Like this?
+    interfaces:
+      Lifecycle:
+        create:
+          implementation: ../scripts/MySQLDatabase/create_database.sh
+        configure:
+          implementation: ../scripts/MySQLDatabase/configure_database.sh
+
+  tosca.nodes.WebServer.Apache:
+    derived_from: tosca.nodes.WebServer
+    interfaces:
+      Lifecycle:
+        create:
+          implementation: ../scripts/ApacheWebServer/install_apache.sh
+        configure:
+          implementation: ../scripts/ApacheWebServer/configure_apache.sh
+        start:
+          implementation: ../scripts/ApacheWebServer/start_apache.sh
+        stop:
+          implementation: ../scripts/ApacheWebServer/stop_apache.sh
+
+  tosca.nodes.WebApplication.WordPress:
+    derived_from: tosca.nodes.WebApplication
+    properties:
+      admin_user:
+        type: string
+      admin_password:
+        type: string
+    requirements:
+      - host: tosca.nodes.WebServer
+      - database_endpoint: tosca.nodes.Database
+    interfaces:
+      Lifecycle:
+        inputs:
+          db_host: string
+          db_port: integer
+          db_name: string
+          db_user: string
+          db_password: string
+        create:
+          implementation: ../scripts/WordPress/install_wordpress.sh
+        configure:
+          implementation: ../scripts/WordPress/configure_wordpress.sh
+        start:
+          implementation: ../scripts/WordPress/start_wordpress.sh

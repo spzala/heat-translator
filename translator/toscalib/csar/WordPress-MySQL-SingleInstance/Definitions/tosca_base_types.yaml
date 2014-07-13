@@ -1,0 +1,179 @@
+tosca_definitions_version: tosca_simple_1.0
+
+description: >
+  This TOSCA definitions file contains TOSCA base type definitions from which
+  all or most other types derive. It is assumed that an orchestrator compliant
+  to the TOSCA Simple Profile supports those as built-in types. Therefore, this
+  definitions file normally does not have to be included in a CSAR.
+
+interfaces:
+  tosca.interfaces.node.Lifecycle:
+    create:
+      description: Basic lifecycle create operation.
+    configure:
+      description: Basic lifecycle configure operation.
+    start:
+      description: Basic lifecycle start operation.
+    stop:
+      description: Basic lifecycle stop operation.
+    delete:
+      description: Basic lifecycle delete operation.
+
+  tosca.interfaces.relationship.Configure:
+    pre_configure_source:
+      description: Operation to pre-configure the source endpoint.
+    pre_configure_target:
+      description: Operation to pre-configure the target endpoint.
+    post_configure_source:
+      description: Operation to post-configure the source endpoint.
+    post_configure_target:
+      description: Operation to post-configure the target endpoint.
+    add_target:
+      description: Operation to add a target node.
+    remove_target:
+      description: Operation to remove a target node.
+
+capability_types:
+  tosca.capabilities.Root:
+
+  tosca.capabilities.Feature:
+    derived_from: tosca.capabilities.Root
+
+  tosca.capabilities.Container:
+    derived_from: tosca.capabilities.Feature
+    containee_types: [ tosca.nodes.Root ]
+
+  tosca.capabilities.Endpoint:
+    derived_from: tosca.capabilities.Feature
+    properties:
+      protocol:
+        type: string
+        default: http
+      port:
+        type: integer
+        constraints: 
+          - greater_or_equal: 1
+          - less_or_equal: 65535
+      secure:
+        type: boolean
+        default: false
+
+  tosca.capabilities.DatabaseEndpoint:
+    derived_from: tosca.capabilities.Endpoint
+
+node_types:
+  tosca.nodes.Root:
+    description: The TOSCA Node Type all other TOSCA base Node Types derive from
+    requirements:
+      - dependency:
+        type: tosca.capabilities.Feature
+        lower_bound: 0
+        upper_bound: unbounded
+    capabilities:
+      feature: tosca.capabilities.Feature
+    interfaces: [ tosca.interfaces.node.Lifecycle ]
+
+  tosca.nodes.Compute:
+    derived_from: tosca.nodes.Root
+    properties:
+      # compute properties
+      num_cpus: 
+         type: integer
+         constraints:
+           - greater_or_equal: 1
+      disk_size: 
+         type: integer
+         constraints:
+           - greater_or_equal: 0
+      mem_size: 
+         type: integer
+         constraints:
+           - greater_or_equal: 0
+      # host image properties
+      os_arch: 
+         type: string
+      os_type:  
+         type: string
+      os_distribution: 
+         type: string
+      os_version:
+         type: string
+      # Compute node’s primary IP address
+      ip_address:
+         type: string
+    capabilities:
+      host: 
+        type: tosca.capabilities.Container
+        containee_types: [tosca.nodes.SoftwareComponent]
+
+  tosca.nodes.SoftwareComponent:
+    derived_from: tosca.nodes.Root
+    properties:
+      # software component version
+      version: 
+        type: string
+        required: false
+    requirements:
+      - host: tosca.nodes.Compute
+
+  tosca.nodes.DBMS:
+    derived_from: tosca.nodes.SoftwareComponent
+    properties:
+      dbms_root_password: 
+        type: string
+        description: the root password for the DBMS service
+      dbms_port:
+        type: integer
+        description: the port the DBMS service will listen to for data and requests
+    capabilities:
+      host: 
+        type: Container
+        containee_types: [ tosca.nodes.Database ]
+
+  tosca.nodes.Database:
+    derived_from: tosca.nodes.Root
+    properties:
+      db_user:
+        type: string
+        description: user account name for DB administration
+      db_password:
+        type: string
+        description: the password for the DB user account
+      db_name:
+        type: string
+        description: the logical name of the database
+    requirements:
+      - host: tosca.nodes.DBMS
+    capabilities:
+      - database_endpoint: tosca.capabilities.DatabaseEndpoint
+
+  tosca.nodes.WebServer:
+    derived_from: tosca.nodes.SoftwareComponent
+    capabilities:
+      http_endpoint: tosca.capabilites.Endpoint
+      https_endpoint: tosca.capabilities.Endpoint
+      host: 
+        type: Container
+        containee_types: [ tosca.nodes.WebApplication ]
+
+  tosca.nodes.WebApplication:
+    derived_from: tosca.nodes.Root
+    requirements:
+      - host: tosca.nodes.WebServer
+
+relationship_types:
+  tosca.relationships.Root:
+    # The TOSCA root relationship type has no property mappings
+    interfaces: [ tosca.interfaces.relationship.Configure ]
+
+  tosca.relationships.DependsOn:
+    derived_from: tosca.relationships.Root
+    valid_targets: [ tosca.capabilities.Feature ]
+
+  tosca.relationships.HostedOn:
+    derived_from: tosca.relationships.DependsOn
+    valid_targets: [ tosca.capabilities.Container ]
+
+  tosca.relations.ConnectsTo:
+    derived_from: tosca.relationships.DependsOn
+    valid_targets: [ tosca.capabilities.Endpoint ]

@@ -1,0 +1,105 @@
+tosca_definitions_version: tosca_simple_1.0
+
+description: >
+  This TOSCA definitions file contains the service template for WordPress and
+  MySQL deployed on a single instance.
+
+inputs:
+  cpus:
+    type: number
+    description: Number of CPUs for the server.
+  wp_admin_user:
+    type: string
+    description: The admin username for WordPress.
+  wp_admin_user:
+    type: string
+    description: The admin password for WordPress.
+  db_name:
+    type: string
+    description: The name of the database.
+  db_user:
+    type: string
+    description: The username of the DB user.
+  db_pwd:
+    type: string
+    description: The WordPress database admin account password.
+  db_root_pwd:
+    type: string
+    description: Root password for MySQL.
+  db_port:
+    type:integer
+    description: Port for the MySQL database
+
+node_templates:
+  wordpress:
+    type: tosca.nodes.WebApplication.WordPress
+    properties:
+      admin_user: { get_input: wp_admin_user }
+      admin_password: { get_input: wp_admin_password }
+    requirements:
+      - host: webserver
+      - database_endpoint: mysql_database
+    interfaces:
+      Lifecyle:
+        inputs:
+          db_host: { get_property: [ server, ip_address ] }
+          db_port: { get_property: [ mysql_dbms, dbms_port ] }
+          db_name: { get_property: [ wordpress_db, db_name ] }
+          db_user: { get_property: [ wordpress_db, db_user ] }
+          db_password: { get_property: [ wordpress_db, db_password ] }
+
+  wordpress_db:
+    type: tosca.nodes.Database.MySQL
+    properties:
+      db_name: { get_input: db_name }
+      db_user: { get_input: db_user }
+      db_password: { get_input: db_pwd }
+    capabilities:
+      database_endpoint:
+        properties:
+          port: { get_input: db_port }
+    requirements:
+      - host: mysql_dbms
+
+  mysql_dbms:
+    type: tosca.nodes.DBMS.MySQL
+    properties:
+      dbms_root_password: { get_input: db_root_pwd }
+    requirements:
+      - host: server
+
+  webserver:
+    type: tosca.nodes.WebServer.Apache
+    requirements:
+      - host: server
+    capabilities:
+      http_endpoint:
+        properties:
+          protocol: http
+          port: 8080
+      https_endpoint:
+        properties:
+          protocol: https
+          port: 8443
+
+  server:
+    type: tosca.nodes.Compute
+    properties:
+      # compute properties (flavor)
+      disk_size: 10
+      num_cpus: { get_input: cpus }
+      mem_size: 4096
+      # host image properties
+      os_arch: x86_64 
+      os_type: Linux  
+      os_distribution: Fedora  
+      os_version: 19
+
+outputs:
+  website_url:
+    description: URL for Wordpress wiki.
+    value:
+      str_replace:
+        template: http://$ip_address/wordpress
+        params:
+          $ip_address: { get_property: [server, ip_address] }
